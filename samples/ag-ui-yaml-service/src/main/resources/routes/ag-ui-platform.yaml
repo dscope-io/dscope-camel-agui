@@ -1,0 +1,41 @@
+- route:
+    id: agui-health
+    from:
+      uri: "undertow:http://0.0.0.0:{{agui.health.port:8080}}/health"
+      steps:
+        - process:
+            ref: agUiHealthProcessor
+
+- route:
+    id: agui-diagnostics
+    from:
+      uri: "undertow:http://0.0.0.0:{{agui.health.port:8080}}/diagnostics"
+      steps:
+        - process:
+            ref: agUiDiagnosticsProcessor
+
+- route:
+    id: agui-rpc
+    from:
+      uri: "undertow:http://0.0.0.0:{{agui.rpc.port:8081}}/agui/rpc?httpMethodRestrict=POST"
+      steps:
+        - doTry:
+            steps:
+              - process:
+                  ref: agUiJsonRpcEnvelopeProcessor
+              - process:
+                  ref: agUiMethodDispatchProcessor
+            doCatch:
+              - exception:
+                  - java.lang.Exception
+                steps:
+                  - process:
+                      ref: agUiErrorProcessor
+
+- route:
+    id: agui-stream
+    from:
+      uri: "undertow:http://0.0.0.0:{{agui.rpc.port:8081}}/agui/stream/{runId}?httpMethodRestrict=GET"
+      steps:
+        - process:
+            ref: agUiSseProcessor

@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.dscope.camel</groupId>
+  <artifactId>camel-ag-ui</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+    <camel.version>4.15.0</camel.version>
+    <jackson.version>2.20.0</jackson.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+  </properties>
+
+  <modules>
+    <module>camel-ag-ui-component</module>
+    <module>samples</module>
+  </modules>
+</project>

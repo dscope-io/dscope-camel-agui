@@ -1,0 +1,98 @@
+# Camel AG-UI Component
+
+Apache Camel component and sample runtime for AG-UI protocol workflows.
+
+This repository provides:
+
+- A reusable Camel component (`agui:`) for producer/consumer integration.
+- A protocol service runtime with JSON-RPC 2.0 request handling, SSE event streaming, and optional WebSocket scaffolding.
+- Core AG-UI event model covering lifecycle, text, tool, state, and interrupt/resume events.
+- In-memory session/state services with pluggable SPI interfaces.
+- Extension hooks for soft integration with MCP/A2A ecosystems.
+
+## Project Structure
+
+```text
+camel-ag-ui/
+|- pom.xml
+|- camel-ag-ui-component/
+|  `- src/main/java/io/dscope/camel/agui/
+|- samples/
+|  `- ag-ui-yaml-service/
+|     |- src/main/java/io/dscope/camel/agui/samples/
+|     `- src/main/resources/routes/ag-ui-platform.yaml
+`- docs/
+   |- architecture.md
+   |- development.md
+   `- TEST_PLAN.md
+```
+
+## Quick Start
+
+### Prerequisites
+
+- Java 21+
+- Maven 3.9+
+
+### Build and Test
+
+```bash
+mvn clean test
+```
+
+### Run Sample Runtime
+
+```bash
+cd samples/ag-ui-yaml-service
+mvn exec:java
+```
+
+Enable optional WebSocket scaffold route:
+
+```bash
+mvn exec:java -Dagui.websocket.enabled=true -Dagui.websocket.path=/agui/ws
+```
+
+## Runtime Endpoints
+
+| Method | URL | Purpose |
+|---|---|---|
+| `GET` | `http://localhost:8080/health` | Health/liveness |
+| `GET` | `http://localhost:8080/diagnostics` | Runtime diagnostics |
+| `POST` | `http://localhost:8081/agui/rpc` | JSON-RPC protocol entrypoint |
+| `GET` | `http://localhost:8081/agui/stream/{runId}` | SSE event stream |
+| `WS` | `ws://localhost:8081/agui/ws` | Optional WebSocket scaffold route (`-Dagui.websocket.enabled=true`) |
+
+## Supported Methods
+
+- `run.start`
+- `run.text`
+- `tool.call`
+- `state.update`
+- `run.interrupt`
+- `run.resume`
+- `run.finish`
+- `health`
+
+## Camel URI
+
+```text
+agui:agentId[?options]
+```
+
+Options:
+
+- `agentId`
+- `serverUrl`
+- `remoteUrl`
+- `rpcPath`
+- `streamPath`
+- `allowedOrigins`
+- `sendToAll`
+- `websocketEnabled`
+- `wsPath`
+- `protocolVersion`
+
+## License
+
+Apache License 2.0.
