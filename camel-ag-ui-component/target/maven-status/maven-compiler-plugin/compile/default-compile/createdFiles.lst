@@ -59,6 +59,7 @@ io/dscope/camel/agui/processor/AgUiToolCallProcessor.class
 io/dscope/camel/agui/model/AgUiEvent.class
 io/dscope/camel/agui/processor/AgUiStateUpdateProcessor.class
 io/dscope/camel/agui/model/AgUiToolCallEnd.class
+io/dscope/camel/agui/persistence/package-info.class
 io/dscope/camel/agui/service/AgUiConsumerRouteService.class
 io/dscope/camel/agui/processor/AgUiInterruptProcessor.class
 io/dscope/camel/agui/model/AgUiTextMessageContent.class

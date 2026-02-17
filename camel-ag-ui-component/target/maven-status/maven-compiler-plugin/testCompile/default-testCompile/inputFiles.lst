@@ -4,3 +4,5 @@
 /Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/test/java/io/dscope/camel/agui/AgUiMethodDispatchProcessorTest.java
 /Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/test/java/io/dscope/camel/agui/JacksonAgUiEventCodecTest.java
 /Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/test/java/io/dscope/camel/agui/AgUiErrorProcessorTest.java
+/Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/test/java/io/dscope/camel/agui/service/PersistentAgUiPersistenceJdbcTest.java
+/Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/test/java/io/dscope/camel/agui/service/PersistentAgUiPersistenceRedisTest.java

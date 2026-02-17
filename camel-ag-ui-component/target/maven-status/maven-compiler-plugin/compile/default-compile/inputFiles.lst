@@ -30,6 +30,7 @@
 /Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/main/java/io/dscope/camel/agui/model/AgUiStepStarted.java
 /Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/main/java/io/dscope/camel/agui/bridge/NoopAgUiTaskEventBridge.java
 /Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/main/java/io/dscope/camel/agui/service/JacksonAgUiEventCodec.java
+/Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/main/java/io/dscope/camel/agui/persistence/package-info.java
 /Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/main/java/io/dscope/camel/agui/processor/AgUiMethodNotFoundException.java
 /Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/main/java/io/dscope/camel/agui/model/AgUiRunStarted.java
 /Users/roman/Projects/DScope/CamelAGUIComponent/camel-ag-ui-component/src/main/java/io/dscope/camel/agui/model/AgUiMethodCatalog.java

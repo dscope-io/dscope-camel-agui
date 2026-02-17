@@ -7,6 +7,11 @@ The AG-UI project has two layers:
 1. `camel-ag-ui-component` reusable endpoint and protocol processors.
 2. `samples/ag-ui-yaml-service` runnable runtime exposing HTTP + SSE endpoints.
 
+Runtime state services can run in two modes:
+
+1. In-memory (`InMemoryAgUiSessionRegistry`, `InMemoryAgUiStateStore`)
+2. Persistence-backed (`PersistentAgUiSessionRegistry`, `PersistentAgUiStateStore`) through `camel-persistence` `FlowStateStore` providers
+
 ## Request Pipeline
 
 ```mermaid
@@ -25,10 +30,12 @@ flowchart LR
 ```mermaid
 flowchart LR
   A[Method processor emits AgUiEvent] --> B[AgUiSessionRegistry]
-  B --> C[In-memory event buffer + sequence]
+  B --> C[Event buffer + sequence]
   D[GET /agui/stream/{runId}] --> E[AgUiSseProcessor]
   E --> F[text/event-stream payload]
 ```
+
+When persistence is enabled (`camel.persistence.enabled=true`), emitted events are also written to the selected backend (`redis` or `jdbc`) and rehydrated on demand.
 
 ## Core Runtime Beans
 
@@ -40,3 +47,15 @@ flowchart LR
 - `agUiDiagnosticsProcessor`
 - `agUiSessionRegistry`
 - `agUiStateStore`
+
+## Persistence Bootstrapping
+
+`AgUiComponentApplicationSupport` selects state services based on properties:
+
+- `camel.persistence.enabled=false` (default): in-memory services
+- `camel.persistence.enabled=true`: persistent services backed by `FlowStateStoreFactory`
+
+Backend selection:
+
+- `camel.persistence.backend=redis`
+- `camel.persistence.backend=jdbc`

@@ -8,6 +8,7 @@ This repository provides:
 - A protocol service runtime with JSON-RPC 2.0 request handling, SSE event streaming, and optional WebSocket scaffolding.
 - Core AG-UI event model covering lifecycle, text, tool, state, and interrupt/resume events.
 - In-memory session/state services with pluggable SPI interfaces.
+- Optional persistence-backed session/state services via shared `camel-persistence` backends.
 - Extension hooks for soft integration with MCP/A2A ecosystems.
 
 ## Project Structure
@@ -40,11 +41,37 @@ camel-ag-ui/
 mvn clean test
 ```
 
+Run persistence-specific tests:
+
+```bash
+# JDBC persistence tests (embedded Derby)
+mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceJdbcTest test
+
+# Redis persistence tests (requires reachable Redis)
+mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceRedisTest -Dcamel.persistence.test.redis.uri=redis://localhost:6379 test
+```
+
 ### Run Sample Runtime
 
 ```bash
 cd samples/ag-ui-yaml-service
 mvn exec:java
+```
+
+### Persistence Quickstart
+
+JDBC mode (embedded Derby):
+
+```bash
+cd samples/ag-ui-yaml-service
+mvn exec:java -Dcamel.persistence.enabled=true -Dcamel.persistence.backend=jdbc -Dcamel.persistence.jdbc.url=jdbc:derby:memory:agui;create=true
+```
+
+Redis mode:
+
+```bash
+cd samples/ag-ui-yaml-service
+mvn exec:java -Dcamel.persistence.enabled=true -Dcamel.persistence.backend=redis -Dcamel.persistence.redis.uri=redis://localhost:6379
 ```
 
 Enable optional WebSocket scaffold route:
@@ -62,6 +89,31 @@ mvn exec:java -Dagui.websocket.enabled=true -Dagui.websocket.path=/agui/ws
 | `POST` | `http://localhost:8081/agui/rpc` | JSON-RPC protocol entrypoint |
 | `GET` | `http://localhost:8081/agui/stream/{runId}` | SSE event stream |
 | `WS` | `ws://localhost:8081/agui/ws` | Optional WebSocket scaffold route (`-Dagui.websocket.enabled=true`) |
+
+## Persistence Configuration
+
+Persistence is disabled by default. Enable it with system properties:
+
+```bash
+-Dcamel.persistence.enabled=true
+-Dcamel.persistence.backend=redis|jdbc|ic4j
+```
+
+Common persistence properties:
+
+- `camel.persistence.snapshot-every-events` (default `25`)
+- `camel.persistence.max-replay-events` (default `500`)
+
+Redis backend properties:
+
+- `camel.persistence.redis.uri` (default `redis://localhost:6379`)
+- `camel.persistence.redis.key-prefix` (default `camel:state`)
+
+JDBC backend properties:
+
+- `camel.persistence.jdbc.url` (example: `jdbc:derby:memory:agui;create=true`)
+- `camel.persistence.jdbc.user`
+- `camel.persistence.jdbc.password`
 
 ## Supported Methods
 
