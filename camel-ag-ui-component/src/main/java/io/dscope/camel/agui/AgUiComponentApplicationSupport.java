@@ -1,11 +1,21 @@
 package io.dscope.camel.agui;
 
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.function.Consumer;
+
+import org.apache.camel.Processor;
+import org.apache.camel.main.Main;
+
 import io.dscope.camel.agui.bridge.AgUiTaskEventBridge;
 import io.dscope.camel.agui.bridge.AgUiToolEventBridge;
 import io.dscope.camel.agui.bridge.NoopAgUiTaskEventBridge;
 import io.dscope.camel.agui.bridge.NoopAgUiToolEventBridge;
 import io.dscope.camel.agui.config.AgUiProtocolMethods;
 import io.dscope.camel.agui.model.AgUiMethodCatalog;
+import io.dscope.camel.agui.processor.AgUiAgentEnvelopeProcessor;
+import io.dscope.camel.agui.processor.AgUiAgentRequestProcessor;
 import io.dscope.camel.agui.processor.AgUiDiagnosticsProcessor;
 import io.dscope.camel.agui.processor.AgUiErrorProcessor;
 import io.dscope.camel.agui.processor.AgUiHealthMethodProcessor;
@@ -13,6 +23,7 @@ import io.dscope.camel.agui.processor.AgUiHealthProcessor;
 import io.dscope.camel.agui.processor.AgUiInterruptProcessor;
 import io.dscope.camel.agui.processor.AgUiJsonRpcEnvelopeProcessor;
 import io.dscope.camel.agui.processor.AgUiMethodDispatchProcessor;
+import io.dscope.camel.agui.processor.AgUiPostSseBridgeProcessor;
 import io.dscope.camel.agui.processor.AgUiResumeProcessor;
 import io.dscope.camel.agui.processor.AgUiRunFinishProcessor;
 import io.dscope.camel.agui.processor.AgUiRunStartProcessor;
@@ -32,12 +43,6 @@ import io.dscope.camel.agui.service.PersistentAgUiStateStore;
 import io.dscope.camel.persistence.core.FlowStateStore;
 import io.dscope.camel.persistence.core.FlowStateStoreFactory;
 import io.dscope.camel.persistence.core.PersistenceConfiguration;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.function.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.main.Main;
 
 public class AgUiComponentApplicationSupport {
 
@@ -45,6 +50,7 @@ public class AgUiComponentApplicationSupport {
     public static final String BEAN_ERROR_PROCESSOR = "agUiErrorProcessor";
     public static final String BEAN_METHOD_DISPATCH_PROCESSOR = "agUiMethodDispatchProcessor";
     public static final String BEAN_SSE_PROCESSOR = "agUiSseProcessor";
+    public static final String BEAN_POST_SSE_BRIDGE_PROCESSOR = "agUiPostSseBridgeProcessor";
     public static final String BEAN_HEALTH_PROCESSOR = "agUiHealthProcessor";
     public static final String BEAN_DIAGNOSTICS_PROCESSOR = "agUiDiagnosticsProcessor";
     public static final String BEAN_SESSION_REGISTRY = "agUiSessionRegistry";
@@ -52,6 +58,9 @@ public class AgUiComponentApplicationSupport {
     public static final String BEAN_METHOD_CATALOG = "agUiMethodCatalog";
     public static final String BEAN_TOOL_EVENT_BRIDGE = "agUiToolEventBridge";
     public static final String BEAN_TASK_EVENT_BRIDGE = "agUiTaskEventBridge";
+    public static final String BEAN_AGENT_ENVELOPE_PROCESSOR = "agUiAgentEnvelopeProcessor";
+    public static final String BEAN_AGENT_REQUEST_PROCESSOR = "agUiAgentRequestProcessor";
+    public static final String BEAN_AGENT_PRE_RUN_TEXT_PROCESSOR = "agUiAgentPreRunTextProcessor";
 
     @FunctionalInterface
     public interface BeanBinder {
@@ -115,8 +124,11 @@ public class AgUiComponentApplicationSupport {
         binder.bind(BEAN_TOOL_EVENT_BRIDGE, toolEventBridge);
         binder.bind(BEAN_TASK_EVENT_BRIDGE, taskEventBridge);
         binder.bind(BEAN_ENVELOPE_PROCESSOR, new AgUiJsonRpcEnvelopeProcessor());
+        binder.bind(BEAN_AGENT_ENVELOPE_PROCESSOR, new AgUiAgentEnvelopeProcessor());
         binder.bind(BEAN_ERROR_PROCESSOR, new AgUiErrorProcessor());
         binder.bind(BEAN_METHOD_DISPATCH_PROCESSOR, new AgUiMethodDispatchProcessor(methods));
+        binder.bind(BEAN_AGENT_REQUEST_PROCESSOR, new AgUiAgentRequestProcessor());
+        binder.bind(BEAN_POST_SSE_BRIDGE_PROCESSOR, new AgUiPostSseBridgeProcessor());
         binder.bind(BEAN_SSE_PROCESSOR, new AgUiSseProcessor(sessionRegistry));
         binder.bind(BEAN_HEALTH_PROCESSOR, new AgUiHealthProcessor());
         binder.bind(BEAN_DIAGNOSTICS_PROCESSOR, new AgUiDiagnosticsProcessor(sessionRegistry, methodCatalog));

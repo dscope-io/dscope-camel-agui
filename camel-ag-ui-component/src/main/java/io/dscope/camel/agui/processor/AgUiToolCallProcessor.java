@@ -8,7 +8,9 @@ import io.dscope.camel.agui.model.AgUiToolCallResult;
 import io.dscope.camel.agui.model.AgUiToolCallStart;
 import io.dscope.camel.agui.service.AgUiSession;
 import io.dscope.camel.agui.service.AgUiSessionRegistry;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
+import java.util.UUID;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -16,6 +18,7 @@ public class AgUiToolCallProcessor implements Processor {
 
     private final AgUiSessionRegistry sessionRegistry;
     private final AgUiToolEventBridge toolEventBridge;
+    private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
     public AgUiToolCallProcessor(AgUiSessionRegistry sessionRegistry, AgUiToolEventBridge toolEventBridge) {
         this.sessionRegistry = sessionRegistry;
@@ -33,17 +36,33 @@ public class AgUiToolCallProcessor implements Processor {
 
         AgUiSession session = requireSession(runId);
         String sessionId = session.getSessionId();
+        String toolCallId = params.getOrDefault("toolCallId", UUID.randomUUID().toString()).toString();
+        String messageId = params.getOrDefault("messageId", UUID.randomUUID().toString()).toString();
 
         toolEventBridge.onToolCallStart(runId, sessionId, toolName, args);
-        session.emit(new AgUiToolCallStart(runId, sessionId, toolName));
-        session.emit(new AgUiToolCallArgs(runId, sessionId, args));
+        session.emit(new AgUiToolCallStart(runId, sessionId, toolCallId, toolName));
+
+        String argsDelta;
+        try {
+            argsDelta = mapper.writeValueAsString(args);
+        } catch (Exception e) {
+            argsDelta = "{}";
+        }
+        session.emit(new AgUiToolCallArgs(runId, sessionId, toolCallId, argsDelta));
 
         Map<String, Object> result = Map.of("ok", true, "toolName", toolName);
-        session.emit(new AgUiToolCallResult(runId, sessionId, result));
-        session.emit(new AgUiToolCallEnd(runId, sessionId, toolName));
+        String resultContent;
+        try {
+            resultContent = mapper.writeValueAsString(result);
+        } catch (Exception e) {
+            resultContent = "{}";
+        }
+        session.emit(new AgUiToolCallResult(runId, sessionId, messageId, toolCallId, resultContent, "tool"));
+        session.emit(new AgUiToolCallEnd(runId, sessionId, toolCallId, toolName));
         toolEventBridge.onToolCallResult(runId, sessionId, toolName, result);
 
-        exchange.setProperty(AgUiExchangeProperties.METHOD_RESULT, Map.of("runId", runId, "toolName", toolName, "result", result));
+        exchange.setProperty(AgUiExchangeProperties.METHOD_RESULT,
+            Map.of("runId", runId, "toolName", toolName, "toolCallId", toolCallId, "messageId", messageId, "result", result));
     }
 
     private AgUiSession requireSession(String runId) {

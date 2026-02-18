@@ -67,6 +67,9 @@ public class InMemoryAgUiSessionRegistry implements AgUiSessionRegistry {
 
         @Override
         public synchronized long emit(AgUiEvent event) {
+            if (event.getThreadId() == null || event.getThreadId().isBlank()) {
+                event.setThreadId(sessionId);
+            }
             long next = sequence.incrementAndGet();
             events.add(new AgUiSessionEventRecord(next, event.getType(), codec.toJson(event)));
             return next;

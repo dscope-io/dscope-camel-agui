@@ -113,6 +113,9 @@ public class PersistentAgUiSessionRegistry implements AgUiSessionRegistry {
 
         @Override
         public synchronized long emit(AgUiEvent event) {
+            if (event.getThreadId() == null || event.getThreadId().isBlank()) {
+                event.setThreadId(sessionId);
+            }
             long next = sequence.incrementAndGet();
             String json = codec.toJson(event);
             events.add(new AgUiSessionEventRecord(next, event.getType(), json));

@@ -12,6 +12,7 @@ public class AgUiEvent {
     private Instant timestamp;
     private String runId;
     private String sessionId;
+    private String threadId;
     private Map<String, Object> metadata;
 
     public AgUiEvent() {
@@ -63,6 +64,14 @@ public class AgUiEvent {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public String getThreadId() {
+        return threadId;
+    }
+
+    public void setThreadId(String threadId) {
+        this.threadId = threadId;
     }
 
     public Map<String, Object> getMetadata() {

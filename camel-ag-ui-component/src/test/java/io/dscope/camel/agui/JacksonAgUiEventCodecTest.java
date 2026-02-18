@@ -11,7 +11,7 @@ class JacksonAgUiEventCodecTest {
     void encodesEventJson() {
         JacksonAgUiEventCodec codec = new JacksonAgUiEventCodec();
         String json = codec.toJson(new AgUiTextMessageContent("run-1", "session-1", "hello"));
-        Assertions.assertTrue(json.contains("text.message.content"));
+        Assertions.assertTrue(json.contains("TEXT_MESSAGE_CONTENT"));
         Assertions.assertTrue(json.contains("hello"));
     }
 }
