@@ -1,8 +1,0 @@
-io/dscope/camel/agui/AgUiJsonRpcEnvelopeProcessorTest.class
-io/dscope/camel/agui/JacksonAgUiEventCodecTest.class
-io/dscope/camel/agui/AgUiMethodDispatchProcessorTest.class
-io/dscope/camel/agui/AgUiErrorProcessorTest.class
-io/dscope/camel/agui/service/PersistentAgUiPersistenceJdbcTest.class
-io/dscope/camel/agui/service/PersistentAgUiPersistenceRedisTest.class
-io/dscope/camel/agui/AgUiStateDeltaCalculatorTest.class
-io/dscope/camel/agui/service/AgUiConsumerRouteServiceTest.class

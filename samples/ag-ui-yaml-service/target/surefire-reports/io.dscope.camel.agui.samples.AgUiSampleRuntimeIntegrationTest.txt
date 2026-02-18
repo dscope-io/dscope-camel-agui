@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: io.dscope.camel.agui.samples.AgUiSampleRuntimeIntegrationTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.875 s -- in io.dscope.camel.agui.samples.AgUiSampleRuntimeIntegrationTest
