@@ -77,6 +77,37 @@
                   id: process4d71
                   ref: agUiSseProcessor
 - route:
+    id: agui-backend-tool-rendering-post-sse
+    from:
+      id: frombtr01
+      uri: undertow
+      parameters:
+        httpURI: http://0.0.0.0:{{agui.rpc.port:8080}}/agui/backend_tool_rendering?httpMethodRestrict=POST
+      steps:
+        - doTry:
+            id: doTrybtr01
+            doCatch:
+              - id: doCatchbtr01
+                exception:
+                  - java.lang.Exception
+                steps:
+                  - process:
+                      id: processbtr01
+                      ref: agUiErrorProcessor
+            steps:
+              - process:
+                  id: processbtr02
+                  ref: agUiAgentEnvelopeProcessor
+              - process:
+                  id: processbtr03
+                  ref: agUiAgentRequestProcessor
+              - process:
+                  id: processbtr04
+                  ref: agUiPostSseBridgeProcessor
+              - process:
+                  id: processbtr05
+                  ref: agUiSseProcessor
+- route:
     id: agui-stream
     from:
       id: from2af2

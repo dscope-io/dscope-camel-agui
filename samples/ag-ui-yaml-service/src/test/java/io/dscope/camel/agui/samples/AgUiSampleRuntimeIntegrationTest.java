@@ -2,6 +2,7 @@ package io.dscope.camel.agui.samples;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.ServerSocket;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -14,11 +15,13 @@ class AgUiSampleRuntimeIntegrationTest {
 
     @Test
     void supportsRpcAndSseEndToEnd() throws Exception {
-        int healthPort = 8080;
-        int rpcPort = 8080;
+        int rpcPort = findAvailablePort();
+        int healthPort = rpcPort;
+        System.setProperty("agui.rpc.port", String.valueOf(rpcPort));
+        System.setProperty("agui.health.port", String.valueOf(healthPort));
         System.setProperty("agui.websocket.enabled", "false");
 
-        org.apache.camel.main.Main runtime = Main.createRuntimeMain();
+        org.apache.camel.main.Main runtime = io.dscope.camel.agui.samples.Main.createRuntimeMain();
         try {
             runtime.start();
             waitForHealth(healthPort);
@@ -61,19 +64,23 @@ class AgUiSampleRuntimeIntegrationTest {
             Assertions.assertTrue(badResponse.body().contains("\"code\":-32601"));
         } finally {
             runtime.stop();
+            System.clearProperty("agui.rpc.port");
+            System.clearProperty("agui.health.port");
             System.clearProperty("agui.websocket.enabled");
         }
     }
 
     @Test
     void enablesWebSocketScaffoldingRouteWhenFlagSet() throws Exception {
-        int healthPort = 8080;
-        int rpcPort = 8080;
+        int rpcPort = findAvailablePort();
+        int healthPort = rpcPort;
 
+        System.setProperty("agui.rpc.port", String.valueOf(rpcPort));
+        System.setProperty("agui.health.port", String.valueOf(healthPort));
         System.setProperty("agui.websocket.enabled", "true");
         System.setProperty("agui.websocket.path", "/agui/ws-test");
 
-        org.apache.camel.main.Main runtime = Main.createRuntimeMain();
+        org.apache.camel.main.Main runtime = io.dscope.camel.agui.samples.Main.createRuntimeMain();
         try {
             runtime.start();
             waitForHealth(healthPort);
@@ -89,6 +96,8 @@ class AgUiSampleRuntimeIntegrationTest {
                 "\"status\":\"started\"");
         } finally {
             runtime.stop();
+            System.clearProperty("agui.rpc.port");
+            System.clearProperty("agui.health.port");
             System.clearProperty("agui.websocket.enabled");
             System.clearProperty("agui.websocket.path");
         }
@@ -96,11 +105,13 @@ class AgUiSampleRuntimeIntegrationTest {
 
     @Test
     void supportsSingleEndpointPostSseTransport() throws Exception {
-        int healthPort = 8080;
-        int rpcPort = 8080;
+        int rpcPort = findAvailablePort();
+        int healthPort = rpcPort;
+        System.setProperty("agui.rpc.port", String.valueOf(rpcPort));
+        System.setProperty("agui.health.port", String.valueOf(healthPort));
         System.setProperty("agui.websocket.enabled", "false");
 
-        org.apache.camel.main.Main runtime = Main.createRuntimeMain();
+        org.apache.camel.main.Main runtime = io.dscope.camel.agui.samples.Main.createRuntimeMain();
         try {
             runtime.start();
             waitForHealth(healthPort);
@@ -121,17 +132,21 @@ class AgUiSampleRuntimeIntegrationTest {
             Assertions.assertTrue(postSseResponse.body().contains("event: STEP_STARTED"));
         } finally {
             runtime.stop();
+            System.clearProperty("agui.rpc.port");
+            System.clearProperty("agui.health.port");
             System.clearProperty("agui.websocket.enabled");
         }
     }
 
     @Test
     void supportsSingleEndpointPostSseWithMethodlessAgUiPayload() throws Exception {
-        int healthPort = 8080;
-        int rpcPort = 8080;
+        int rpcPort = findAvailablePort();
+        int healthPort = rpcPort;
+        System.setProperty("agui.rpc.port", String.valueOf(rpcPort));
+        System.setProperty("agui.health.port", String.valueOf(healthPort));
         System.setProperty("agui.websocket.enabled", "false");
 
-        org.apache.camel.main.Main runtime = Main.createRuntimeMain();
+        org.apache.camel.main.Main runtime = io.dscope.camel.agui.samples.Main.createRuntimeMain();
         try {
             runtime.start();
             waitForHealth(healthPort);
@@ -158,17 +173,21 @@ class AgUiSampleRuntimeIntegrationTest {
             Assertions.assertTrue(postSseResponse.body().contains("event: RUN_FINISHED"));
         } finally {
             runtime.stop();
+            System.clearProperty("agui.rpc.port");
+            System.clearProperty("agui.health.port");
             System.clearProperty("agui.websocket.enabled");
         }
     }
 
     @Test
     void emitsWeatherToolLifecycleForMethodlessAgentRequest() throws Exception {
-        int healthPort = 8080;
-        int rpcPort = 8080;
+        int rpcPort = findAvailablePort();
+        int healthPort = rpcPort;
+        System.setProperty("agui.rpc.port", String.valueOf(rpcPort));
+        System.setProperty("agui.health.port", String.valueOf(healthPort));
         System.setProperty("agui.websocket.enabled", "false");
 
-        org.apache.camel.main.Main runtime = Main.createRuntimeMain();
+        org.apache.camel.main.Main runtime = io.dscope.camel.agui.samples.Main.createRuntimeMain();
         try {
             runtime.start();
             waitForHealth(healthPort);
@@ -200,17 +219,21 @@ class AgUiSampleRuntimeIntegrationTest {
             Assertions.assertTrue(body.contains("event: RUN_FINISHED"));
         } finally {
             runtime.stop();
+            System.clearProperty("agui.rpc.port");
+            System.clearProperty("agui.health.port");
             System.clearProperty("agui.websocket.enabled");
         }
     }
 
     @Test
     void emitsSportsTickerForMethodlessAgentRequest() throws Exception {
-        int healthPort = 8080;
-        int rpcPort = 8080;
+        int rpcPort = findAvailablePort();
+        int healthPort = rpcPort;
+        System.setProperty("agui.rpc.port", String.valueOf(rpcPort));
+        System.setProperty("agui.health.port", String.valueOf(healthPort));
         System.setProperty("agui.websocket.enabled", "false");
 
-        org.apache.camel.main.Main runtime = Main.createRuntimeMain();
+        org.apache.camel.main.Main runtime = io.dscope.camel.agui.samples.Main.createRuntimeMain();
         try {
             runtime.start();
             waitForHealth(healthPort);
@@ -239,7 +262,56 @@ class AgUiSampleRuntimeIntegrationTest {
             Assertions.assertTrue(body.contains("event: RUN_FINISHED"));
         } finally {
             runtime.stop();
+            System.clearProperty("agui.rpc.port");
+            System.clearProperty("agui.health.port");
             System.clearProperty("agui.websocket.enabled");
+        }
+    }
+
+    @Test
+    void supportsBackendToolRenderingAliasEndpoint() throws Exception {
+        int rpcPort = findAvailablePort();
+        int healthPort = rpcPort;
+        System.setProperty("agui.rpc.port", String.valueOf(rpcPort));
+        System.setProperty("agui.health.port", String.valueOf(healthPort));
+        System.setProperty("agui.websocket.enabled", "false");
+
+        org.apache.camel.main.Main runtime = io.dscope.camel.agui.samples.Main.createRuntimeMain();
+        try {
+            runtime.start();
+            waitForHealth(healthPort);
+
+            HttpClient http = HttpClient.newHttpClient();
+            HttpRequest postSseRequest = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + rpcPort + "/agui/backend_tool_rendering"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(
+                    "{\"threadId\":\"btr-thread\",\"messages\":[{\"role\":\"user\",\"content\":\"what is the weather in Berlin?\"}]}"))
+                .build();
+            HttpResponse<String> postSseResponse = http.send(postSseRequest, HttpResponse.BodyHandlers.ofString());
+
+            Assertions.assertEquals(200, postSseResponse.statusCode());
+            String contentType = postSseResponse.headers().firstValue("Content-Type").orElse("");
+            Assertions.assertTrue(contentType.contains("text/event-stream"), contentType);
+
+            String body = postSseResponse.body();
+            Assertions.assertTrue(body.contains("event: RUN_STARTED"));
+            Assertions.assertTrue(body.contains("event: TOOL_CALL_START"));
+            Assertions.assertTrue(body.contains("event: TOOL_CALL_RESULT"));
+            Assertions.assertTrue(body.contains("\"toolCallName\":\"get_weather\""));
+            Assertions.assertTrue(body.contains("Weather in Berlin: 18C and Cloudy."));
+            Assertions.assertTrue(body.contains("event: RUN_FINISHED"));
+        } finally {
+            runtime.stop();
+            System.clearProperty("agui.rpc.port");
+            System.clearProperty("agui.health.port");
+            System.clearProperty("agui.websocket.enabled");
+        }
+    }
+
+    private static int findAvailablePort() throws IOException {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
         }
     }
 

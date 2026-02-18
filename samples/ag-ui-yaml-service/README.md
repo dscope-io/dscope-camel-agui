@@ -107,6 +107,22 @@ That confirms:
 - SSE stream parsing by Dojo,
 - AG-UI event compatibility for chat rendering.
 
+### Prompt Guide (What To Type In Dojo)
+
+Use these prompts to quickly validate behavior:
+
+- `hello`
+  - Expected: standard assistant text flow (`TEXT_MESSAGE_START`/`CONTENT`/`END`) and run lifecycle events.
+- `weather in berlin`
+  - Expected: weather widget tool lifecycle (`TOOL_CALL_START`, `TOOL_CALL_ARGS`, `TOOL_CALL_RESULT`, `TOOL_CALL_END`) followed by weather summary text.
+- `show me 49ers score`
+  - Expected: sports widget tool lifecycle and sports summary text.
+- `sports update please`
+  - Expected (current behavior): plain text response only.
+  - Note: sports widget currently triggers on specific sports keywords like `49ers`, `cowboys`, or team-name phrases.
+
+Tip: if you want deterministic validation of tool events, use the weather/sports trigger phrases above exactly.
+
 ## 6. Event Compatibility Checklist (Important)
 
 For Dojo compatibility in this repo version, ensure SSE event payloads include:
