@@ -6,6 +6,8 @@ This document explains:
 - how to run this Camel sample,
 - how to install and run AGUI Dojo against this sample.
 
+This guide tracks the current sample behavior, including the `/agui/backend_tool_rendering` alias route.
+
 ## What AGUI Dojo Is (Purpose)
 
 AGUI Dojo is a visual test client for AG-UI agents and integrations.
