@@ -19,4 +19,33 @@
     <module>camel-ag-ui-component</module>
     <module>samples</module>
   </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>4.6</version>
+        <configuration>
+          <header>${maven.multiModuleProjectDirectory}/license-header.txt</header>
+          <strictCheck>true</strictCheck>
+          <includes>
+            <include>**/*.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/target/**</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>check-license-headers</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
