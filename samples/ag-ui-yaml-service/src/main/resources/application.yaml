@@ -1,0 +1,22 @@
+agui:
+  health:
+    port: 8080
+  rpc:
+    port: 8080
+  websocket:
+    enabled: false
+    path: /agui/ws
+
+camel:
+  persistence:
+    enabled: false
+    backend: redis
+    snapshot-every-events: 25
+    max-replay-events: 500
+    redis:
+      uri: redis://localhost:6379
+      key-prefix: camel:state
+    jdbc:
+      url: jdbc:derby:memory:agui;create=true
+      user: ""
+      password: ""

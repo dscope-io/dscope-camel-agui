@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AG-UI Sample Viewer</title>
+    <style>
+      :root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+      body { margin: 0; padding: 16px; background: #f8f9fb; color: #1f2937; }
+      h1 { margin-top: 0; font-size: 20px; }
+      .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+      .card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+      label { font-size: 12px; color: #4b5563; display: block; margin-bottom: 4px; }
+      input, textarea, button { font: inherit; }
+      input, textarea { border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; width: 100%; box-sizing: border-box; }
+      textarea { min-height: 80px; }
+      button { border: 1px solid #cbd5e1; background: #ffffff; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
+      button:hover { background: #f1f5f9; }
+      pre { background: #0b1020; color: #c9d1d9; padding: 10px; border-radius: 6px; overflow: auto; max-height: 280px; }
+      .cols { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    </style>
+  </head>
+  <body>
+    <h1>AG-UI Sample Viewer</h1>
+
+    <div class="card">
+      <div class="row">
+        <div style="min-width:200px; flex:1">
+          <label for="runId">runId</label>
+          <input id="runId" value="demo-run" />
+        </div>
+        <div style="min-width:200px; flex:1">
+          <label for="sessionId">sessionId</label>
+          <input id="sessionId" value="demo-session" />
+        </div>
+      </div>
+      <div class="row">
+        <button id="startBtn">run.start</button>
+        <button id="textBtn">run.text</button>
+        <button id="finishBtn">run.finish</button>
+        <button id="connectBtn">Connect SSE</button>
+        <button id="clearBtn">Clear Logs</button>
+      </div>
+      <label for="textInput">text payload</label>
+      <textarea id="textInput">Hello from AG-UI sample viewer</textarea>
+    </div>
+
+    <div class="cols">
+      <div class="card">
+        <strong>RPC Response Log</strong>
+        <pre id="rpcLog"></pre>
+      </div>
+      <div class="card">
+        <strong>SSE Event Log</strong>
+        <pre id="sseLog"></pre>
+      </div>
+    </div>
+
+    <script>
+      const rpcUrl = '/agui/rpc';
+      const rpcLog = document.getElementById('rpcLog');
+      const sseLog = document.getElementById('sseLog');
+      let sse;
+
+      function now() {
+        return new Date().toISOString();
+      }
+
+      function appendLog(el, value) {
+        el.textContent += `[${now()}] ${value}\n`;
+        el.scrollTop = el.scrollHeight;
+      }
+
+      function getRunId() {
+        return document.getElementById('runId').value.trim();
+      }
+
+      function getSessionId() {
+        return document.getElementById('sessionId').value.trim();
+      }
+
+      async function callRpc(id, method, params) {
+        const payload = { jsonrpc: '2.0', id, method, params };
+        const response = await fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const body = await response.text();
+        appendLog(rpcLog, `${method} => HTTP ${response.status} ${body}`);
+      }
+
+      document.getElementById('startBtn').addEventListener('click', () => {
+        callRpc('1', 'run.start', { runId: getRunId(), sessionId: getSessionId() })
+          .catch(e => appendLog(rpcLog, `run.start error: ${e.message}`));
+      });
+
+      document.getElementById('textBtn').addEventListener('click', () => {
+        const text = document.getElementById('textInput').value;
+        callRpc('2', 'run.text', { runId: getRunId(), text })
+          .catch(e => appendLog(rpcLog, `run.text error: ${e.message}`));
+      });
+
+      document.getElementById('finishBtn').addEventListener('click', () => {
+        callRpc('3', 'run.finish', { runId: getRunId() })
+          .catch(e => appendLog(rpcLog, `run.finish error: ${e.message}`));
+      });
+
+      document.getElementById('connectBtn').addEventListener('click', () => {
+        const runId = encodeURIComponent(getRunId());
+        if (sse) {
+          sse.close();
+        }
+        sse = new EventSource(`/agui/stream/${runId}?afterSequence=0&limit=200`);
+        appendLog(sseLog, `SSE connected for runId=${runId}`);
+
+        sse.onmessage = (event) => {
+          appendLog(sseLog, `message: ${event.data}`);
+        };
+
+        ['run.started', 'step.started', 'text.message.start', 'text.message.content', 'text.message.end', 'run.finished'].forEach((evt) => {
+          sse.addEventListener(evt, (event) => {
+            appendLog(sseLog, `${evt}: ${event.data}`);
+          });
+        });
+
+        sse.onerror = () => {
+          appendLog(sseLog, 'SSE error/closed');
+        };
+      });
+
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        rpcLog.textContent = '';
+        sseLog.textContent = '';
+      });
+    </script>
+  </body>
+</html>

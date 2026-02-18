@@ -17,7 +17,7 @@
 - route:
     id: agui-rpc
     from:
-      uri: "undertow:http://0.0.0.0:{{agui.rpc.port:8081}}/agui/rpc?httpMethodRestrict=POST"
+      uri: "undertow:http://0.0.0.0:{{agui.rpc.port:8080}}/agui/rpc?httpMethodRestrict=POST"
       steps:
         - doTry:
             steps:
@@ -33,9 +33,39 @@
                       ref: agUiErrorProcessor
 
 - route:
+    id: agui-agent-post-sse
+    from:
+      uri: "undertow:http://0.0.0.0:{{agui.rpc.port:8080}}/agui/agent?httpMethodRestrict=POST"
+      steps:
+        - doTry:
+            steps:
+              - process:
+                  ref: agUiAgentEnvelopeProcessor
+              - process:
+                  ref: agUiMethodDispatchProcessor
+              - process:
+                  ref: agUiPostSseBridgeProcessor
+              - process:
+                  ref: agUiSseProcessor
+            doCatch:
+              - exception:
+                  - java.lang.Exception
+                steps:
+                  - process:
+                      ref: agUiErrorProcessor
+
+- route:
     id: agui-stream
     from:
-      uri: "undertow:http://0.0.0.0:{{agui.rpc.port:8081}}/agui/stream/{runId}?httpMethodRestrict=GET"
+      uri: "undertow:http://0.0.0.0:{{agui.rpc.port:8080}}/agui/stream/{runId}?httpMethodRestrict=GET"
       steps:
         - process:
             ref: agUiSseProcessor
+
+- route:
+    id: agui-ui
+    from:
+      uri: "undertow:http://0.0.0.0:{{agui.rpc.port:8080}}/agui/ui?httpMethodRestrict=GET"
+      steps:
+        - process:
+            ref: agUiUiPageProcessor

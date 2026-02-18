@@ -1,7 +1,8 @@
 package io.dscope.camel.agui.samples;
 
-import io.dscope.camel.agui.AgUiComponentApplicationSupport;
 import org.apache.camel.builder.RouteBuilder;
+
+import io.dscope.camel.agui.AgUiComponentApplicationSupport;
 
 public final class Main {
 
@@ -15,12 +16,15 @@ public final class Main {
 
     static org.apache.camel.main.Main createRuntimeMain() {
         AgUiComponentApplicationSupport support = new AgUiComponentApplicationSupport();
-        return support.createMain("classpath:routes/ag-ui-platform.yaml", main -> {
+        return support.createMain("classpath:routes/ag-ui-platform.camel.yaml", main -> {
+            main.bind("agUiUiPageProcessor", new AgUiUiPageProcessor());
+            main.bind(AgUiComponentApplicationSupport.BEAN_AGENT_PRE_RUN_TEXT_PROCESSOR, new AgUiSampleWidgetProcessor());
+
             if (!Boolean.parseBoolean(System.getProperty("agui.websocket.enabled", "false"))) {
                 return;
             }
 
-            String rpcPort = System.getProperty("agui.rpc.port", "8081");
+            String rpcPort = System.getProperty("agui.rpc.port", "8080");
             String wsPath = normalizePath(System.getProperty("agui.websocket.path", "/agui/ws"));
             String wsUri = "undertow:ws://0.0.0.0:" + rpcPort + wsPath + "?sendToAll=false&allowedOrigins=*";
 
