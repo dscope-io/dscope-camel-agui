@@ -10,11 +10,11 @@ public class AgUiConfiguration {
     @Metadata(required = true)
     private String agentId;
 
-    @UriParam(label = "consumer", defaultValue = "undertow:http://0.0.0.0:8081")
-    private String serverUrl = "undertow:http://0.0.0.0:8081";
+    @UriParam(label = "consumer", defaultValue = "undertow:http://0.0.0.0:8080")
+    private String serverUrl = "undertow:http://0.0.0.0:8080";
 
-    @UriParam(label = "producer", defaultValue = "http://localhost:8081")
-    private String remoteUrl = "http://localhost:8081";
+    @UriParam(label = "producer", defaultValue = "http://localhost:8080")
+    private String remoteUrl = "http://localhost:8080";
 
     @UriParam(label = "consumer,producer", defaultValue = "/agui/rpc")
     private String rpcPath = "/agui/rpc";
