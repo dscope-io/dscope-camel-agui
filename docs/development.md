@@ -13,6 +13,22 @@ mvn -pl camel-ag-ui-component test
 mvn -pl samples/ag-ui-yaml-service -am test
 ```
 
+## Run Sample Runtime
+
+From repository root (recommended):
+
+```bash
+mvn -f samples/ag-ui-yaml-service/pom.xml -DskipTests -Dexec.mainClass=io.dscope.camel.agui.samples.Main compile exec:java
+```
+
+Primary AG-UI POST+SSE endpoint:
+
+- `POST /agui/agent`
+
+Alias endpoint (same processor chain):
+
+- `POST /agui/backend_tool_rendering`
+
 ## Extension Hooks
 
 Soft integrations can be added through:
@@ -73,8 +89,7 @@ Redis tests auto-skip if Redis is unreachable.
 Sample runtime can add a WebSocket route (default disabled):
 
 ```bash
-cd samples/ag-ui-yaml-service
-mvn exec:java -Dagui.websocket.enabled=true -Dagui.websocket.path=/agui/ws
+mvn -f samples/ag-ui-yaml-service/pom.xml -DskipTests -Dexec.mainClass=io.dscope.camel.agui.samples.Main compile exec:java -Dagui.websocket.enabled=true -Dagui.websocket.path=/agui/ws
 ```
 
 Feature flags:

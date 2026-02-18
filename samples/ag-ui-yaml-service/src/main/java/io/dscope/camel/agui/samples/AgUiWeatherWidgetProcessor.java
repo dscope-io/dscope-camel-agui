@@ -5,16 +5,17 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.lang.reflect.Method;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.Exchange;
 
+import io.dscope.camel.agui.processor.AbstractAgUiAgentWidgetProcessor;
 import io.dscope.camel.agui.model.AgUiToolCallArgs;
 import io.dscope.camel.agui.model.AgUiToolCallEnd;
 import io.dscope.camel.agui.model.AgUiToolCallResult;
 import io.dscope.camel.agui.model.AgUiToolCallStart;
-import io.dscope.camel.agui.processor.AbstractAgUiAgentWidgetProcessor;
 import io.dscope.camel.agui.service.AgUiSession;
 import io.dscope.camel.agui.service.AgUiSessionRegistry;
 
@@ -80,10 +81,33 @@ final class AgUiWeatherWidgetProcessor extends AbstractAgUiAgentWidgetProcessor 
         String argsDelta = toJson(Map.of("city", city, "unit", "C"));
         String resultContent = toJson(new HashMap<>(Map.of("city", city, "tempC", 18, "condition", "Cloudy")));
 
-        session.emit(new AgUiToolCallStart(runId, sessionId, toolCallId, WEATHER_TOOL_NAME));
-        session.emit(new AgUiToolCallArgs(runId, sessionId, toolCallId, argsDelta));
-        session.emit(new AgUiToolCallResult(runId, sessionId, toolMessageId, toolCallId, resultContent, "tool"));
-        session.emit(new AgUiToolCallEnd(runId, sessionId, toolCallId, WEATHER_TOOL_NAME));
+        AgUiToolCallStart start = new AgUiToolCallStart(runId, sessionId, WEATHER_TOOL_NAME);
+        applyIfPresent(start, "setToolCallId", String.class, toolCallId);
+        session.emit(start);
+
+        AgUiToolCallArgs args = new AgUiToolCallArgs(runId, sessionId, Map.of("city", city, "unit", "C"));
+        applyIfPresent(args, "setToolCallId", String.class, toolCallId);
+        applyIfPresent(args, "setDelta", String.class, argsDelta);
+        session.emit(args);
+
+        AgUiToolCallResult result = new AgUiToolCallResult(runId, sessionId, resultContent);
+        applyIfPresent(result, "setMessageId", String.class, toolMessageId);
+        applyIfPresent(result, "setToolCallId", String.class, toolCallId);
+        applyIfPresent(result, "setContent", String.class, resultContent);
+        applyIfPresent(result, "setRole", String.class, "tool");
+        session.emit(result);
+
+        AgUiToolCallEnd end = new AgUiToolCallEnd(runId, sessionId, WEATHER_TOOL_NAME);
+        applyIfPresent(end, "setToolCallId", String.class, toolCallId);
+        session.emit(end);
+    }
+
+    private static void applyIfPresent(Object target, String method, Class<?> argType, Object value) {
+        try {
+            Method setter = target.getClass().getMethod(method, argType);
+            setter.invoke(target, value);
+        } catch (ReflectiveOperationException ignored) {
+        }
     }
 
     private String toJson(Map<String, Object> payload) {

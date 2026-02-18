@@ -6,6 +6,8 @@ import io.dscope.camel.agui.AgUiComponentApplicationSupport;
 
 public final class Main {
 
+    private static final String AG_UI_AGENT_PRE_RUN_TEXT_PROCESSOR_BEAN = "agUiAgentPreRunTextProcessor";
+
     private Main() {
     }
 
@@ -18,7 +20,7 @@ public final class Main {
         AgUiComponentApplicationSupport support = new AgUiComponentApplicationSupport();
         return support.createMain("classpath:routes/ag-ui-platform.camel.yaml", main -> {
             main.bind("agUiUiPageProcessor", new AgUiUiPageProcessor());
-            main.bind(AgUiComponentApplicationSupport.BEAN_AGENT_PRE_RUN_TEXT_PROCESSOR, new AgUiSampleWidgetProcessor());
+            main.bind(AG_UI_AGENT_PRE_RUN_TEXT_PROCESSOR_BEAN, new AgUiSampleWidgetProcessor());
 
             if (!Boolean.parseBoolean(System.getProperty("agui.websocket.enabled", "false"))) {
                 return;

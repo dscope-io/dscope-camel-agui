@@ -1,0 +1,8 @@
+# Maven / Java build outputs
+**/target/
+*.class
+derby.log
+**/derby.log
+
+# IDE and OS noise
+.DS_Store

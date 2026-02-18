@@ -20,17 +20,17 @@ For this sample, Dojo is a fast way to confirm that `POST /agui/agent` works end
 
 ## 1. Start the Camel Sample
 
-From repository root:
+From repository root (recommended):
 
 ```bash
-cd samples/ag-ui-yaml-service
-mvn -DskipTests compile exec:java
+mvn -f samples/ag-ui-yaml-service/pom.xml -DskipTests -Dexec.mainClass=io.dscope.camel.agui.samples.Main compile exec:java
 ```
 
 Default endpoints:
 
 - Health: `http://localhost:8080/health`
 - Dojo-compatible agent endpoint: `http://localhost:8080/agui/agent`
+- Backend-tool-rendering alias endpoint: `http://localhost:8080/agui/backend_tool_rendering`
 
 Quick health check:
 
@@ -85,6 +85,12 @@ Start Dojo and point `server-starter` integration to this sample endpoint:
 
 ```bash
 SERVER_STARTER_URL=http://localhost:8080/agui/agent pnpm --filter demo-viewer start
+```
+
+If your Dojo feature expects the backend-tool-rendering endpoint directly, use:
+
+```bash
+SERVER_STARTER_URL=http://localhost:8080/agui/backend_tool_rendering pnpm --filter demo-viewer start
 ```
 
 If you need explicit port selection:
@@ -244,3 +250,110 @@ Expected:
 - assistant response appears,
 - weather tool lifecycle is emitted in stream,
 - tool result content is available to UI rendering.
+
+## 9. Add Score Renderer In AGUI Dojo (for `get_score`)
+
+Use this when your backend emits sports tool events and you want Dojo to render a structured score card (not just plain text).
+
+### Backend prerequisites
+
+Your backend stream should emit tool events with tool name `get_score` and JSON result payload in `TOOL_CALL_RESULT.content`.
+
+Typical score payload shape:
+
+```json
+{
+  "league": "NFL",
+  "status": "Final",
+  "homeTeam": "San Francisco 49ers",
+  "awayTeam": "Dallas Cowboys",
+  "homeScore": 40,
+  "awayScore": 3
+}
+```
+
+Snake_case also works if your backend emits:
+
+```json
+{
+  "home_team": "San Francisco 49ers",
+  "away_team": "Dallas Cowboys",
+  "home_score": 40,
+  "away_score": 3
+}
+```
+
+### Dojo frontend change
+
+Edit this file in AGUI Dojo repo:
+
+- `/Users/roman/Projects/AGUIDojo/apps/dojo/src/app/[integrationId]/feature/backend_tool_rendering/page.tsx`
+
+Add a `useCopilotAction` registration for `name: "get_score"` and render a `ScoreCard` component from the tool result.
+
+Minimal implementation pattern:
+
+```tsx
+useCopilotAction({
+  name: "get_score",
+  render: false,
+  followUp: false,
+  available: "disabled",
+  description: "Render score result returned by backend",
+  renderAndWaitForResponse: ({ status, result }) => {
+    if (status !== "complete" || !result) return null;
+
+    return (
+      <ScoreCard
+        result={result as {
+          league?: string;
+          status?: string;
+          homeTeam?: string;
+          awayTeam?: string;
+          homeScore?: number;
+          awayScore?: number;
+          home_team?: string;
+          away_team?: string;
+          home_score?: number;
+          away_score?: number;
+        }}
+      />
+    );
+  },
+});
+```
+
+`ScoreCard` should map both camelCase and snake_case fields and render league/status/teams/scores.
+
+### Build and run Dojo with this sample
+
+From AGUI Dojo repo root:
+
+```bash
+COREPACK_ENABLE_STRICT=0 pnpm --filter demo-viewer build
+PORT=3000 \
+SERVER_STARTER_URL=http://localhost:8080/agui/agent \
+SERVER_STARTER_ALL_FEATURES_URL=http://localhost:8080/agui \
+COREPACK_ENABLE_STRICT=0 pnpm --filter demo-viewer start
+```
+
+Open score-rendering feature page:
+
+- `http://localhost:3000/server-starter-all-features/feature/backend_tool_rendering`
+
+### Test prompt
+
+Use:
+
+- `show score for San Francisco 49ers vs Dallas Cowboys`
+
+Expected:
+
+- tool events are processed,
+- Dojo shows a score card widget (league/status/team names/scores),
+- assistant text summary can still appear below the widget.
+
+### Restart behavior
+
+- Backend-only changes: no Dojo restart usually needed.
+- Dojo frontend code changes (`page.tsx`): rebuild + restart required when running with `next start`.

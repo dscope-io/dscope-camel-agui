@@ -22,7 +22,7 @@ camel-ag-ui/
 |- samples/
 |  `- ag-ui-yaml-service/
 |     |- src/main/java/io/dscope/camel/agui/samples/
-|     `- src/main/resources/routes/ag-ui-platform.yaml
+|     `- src/main/resources/routes/ag-ui-platform.camel.yaml
 `- docs/
    |- architecture.md
    |- development.md
@@ -67,6 +67,12 @@ cd samples/ag-ui-yaml-service
 mvn -DskipTests compile exec:java
 ```
 
+Recommended from repository root (avoids accidental root-module `exec:java` execution):
+
+```bash
+mvn -f samples/ag-ui-yaml-service/pom.xml -DskipTests -Dexec.mainClass=io.dscope.camel.agui.samples.Main compile exec:java
+```
+
 ### Persistence Quickstart
 
 JDBC mode (embedded Derby):
@@ -98,6 +104,7 @@ mvn -DskipTests compile exec:java -Dagui.websocket.enabled=true -Dagui.websocket
 | `GET` | `http://localhost:8080/agui/ui` | Browser UI for manual RPC + SSE visualization |
 | `POST` | `http://localhost:8080/agui/rpc` | JSON-RPC protocol entrypoint |
 | `POST` | `http://localhost:8080/agui/agent` | Single-endpoint POST+SSE transport (Dojo-style clients) |
+| `POST` | `http://localhost:8080/agui/backend_tool_rendering` | Alias of `/agui/agent` for backend-tool-rendering clients |
 | `GET` | `http://localhost:8080/agui/stream/{runId}` | SSE event stream |
 | `WS` | `ws://localhost:8080/agui/ws` | Optional WebSocket scaffold route (`-Dagui.websocket.enabled=true`) |
 
@@ -122,6 +129,8 @@ curl -N -X POST http://localhost:8080/agui/agent \
 ```
 
 Expected response stream includes events such as `run.started` and `step.started`.
+
+Current sample emits uppercase AG-UI event names (for example `RUN_STARTED`, `STEP_STARTED`).
 
 ## Persistence Configuration
 

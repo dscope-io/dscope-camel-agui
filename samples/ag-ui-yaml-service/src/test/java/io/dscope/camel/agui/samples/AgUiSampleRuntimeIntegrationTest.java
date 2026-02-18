@@ -210,7 +210,10 @@ class AgUiSampleRuntimeIntegrationTest {
             Assertions.assertTrue(body.contains("event: TOOL_CALL_ARGS"));
             Assertions.assertTrue(body.contains("event: TOOL_CALL_RESULT"));
             Assertions.assertTrue(body.contains("event: TOOL_CALL_END"));
-            Assertions.assertTrue(body.contains("\"toolCallName\":\"get_weather\""));
+            Assertions.assertTrue(
+                body.contains("\"toolCallName\":\"get_weather\"")
+                    || body.contains("\"toolName\":\"get_weather\""),
+                body);
             Assertions.assertTrue(body.contains("\"toolCallId\":"));
             Assertions.assertTrue(body.contains("\"delta\":"));
             Assertions.assertTrue(body.contains("\"content\":"));
@@ -256,8 +259,18 @@ class AgUiSampleRuntimeIntegrationTest {
             Assertions.assertTrue(body.contains("event: TOOL_CALL_ARGS"));
             Assertions.assertTrue(body.contains("event: TOOL_CALL_RESULT"));
             Assertions.assertTrue(body.contains("event: TOOL_CALL_END"));
-            Assertions.assertTrue(body.contains("\"toolCallName\":\"get_sports_ticker\""));
-            Assertions.assertTrue(body.contains("San Francisco 49ers (49s) are winning 40:3 against the Dallas Cowboys."));
+            Assertions.assertTrue(
+                body.contains("\"toolCallName\":\"get_score\"")
+                    || body.contains("\"toolName\":\"get_score\""),
+                body);
+            Assertions.assertTrue(body.contains("\\\"widgetType\\\":\\\"score_card\\\""));
+            Assertions.assertTrue(body.contains("\\\"league\\\":\\\"NFL\\\""));
+            Assertions.assertTrue(body.contains("\\\"homeTeam\\\":\\\"San Francisco 49ers\\\""));
+            Assertions.assertTrue(body.contains("\\\"awayTeam\\\":\\\"Dallas Cowboys\\\""));
+            Assertions.assertTrue(body.contains("\\\"homeScore\\\":40"));
+            Assertions.assertTrue(body.contains("\\\"awayScore\\\":3"));
+            Assertions.assertTrue(body.contains("\\\"status\\\":\\\"Final\\\""));
+            Assertions.assertTrue(body.contains("San Francisco 49ers are winning 40-3 against the Dallas Cowboys."));
             Assertions.assertTrue(body.contains("event: TEXT_MESSAGE_CONTENT"));
             Assertions.assertTrue(body.contains("event: RUN_FINISHED"));
         } finally {
@@ -298,7 +311,10 @@ class AgUiSampleRuntimeIntegrationTest {
             Assertions.assertTrue(body.contains("event: RUN_STARTED"));
             Assertions.assertTrue(body.contains("event: TOOL_CALL_START"));
             Assertions.assertTrue(body.contains("event: TOOL_CALL_RESULT"));
-            Assertions.assertTrue(body.contains("\"toolCallName\":\"get_weather\""));
+            Assertions.assertTrue(
+                body.contains("\"toolCallName\":\"get_weather\"")
+                    || body.contains("\"toolName\":\"get_weather\""),
+                body);
             Assertions.assertTrue(body.contains("Weather in Berlin: 18C and Cloudy."));
             Assertions.assertTrue(body.contains("event: RUN_FINISHED"));
         } finally {

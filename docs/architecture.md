@@ -7,6 +7,10 @@ The AG-UI project has two layers:
 1. `camel-ag-ui-component` reusable endpoint and protocol processors.
 2. `samples/ag-ui-yaml-service` runnable runtime exposing HTTP + SSE endpoints.
 
+Sample route definitions are loaded from:
+
+- `samples/ag-ui-yaml-service/src/main/resources/routes/ag-ui-platform.camel.yaml`
+
 Runtime state services can run in two modes:
 
 1. In-memory (`InMemoryAgUiSessionRegistry`, `InMemoryAgUiStateStore`)
@@ -40,6 +44,8 @@ When persistence is enabled (`camel.persistence.enabled=true`), emitted events a
 ## Agent Request Extension Hook
 
 `POST /agui/agent` uses the core `agUiAgentRequestProcessor` for methodless run orchestration.
+
+`POST /agui/backend_tool_rendering` is an alias route that uses the same processor chain as `/agui/agent`.
 
 Before `run.text` dispatch, core optionally resolves a processor bean named `agUiAgentPreRunTextProcessor` and executes it.
 
