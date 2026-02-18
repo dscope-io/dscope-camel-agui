@@ -37,6 +37,14 @@ flowchart LR
 
 When persistence is enabled (`camel.persistence.enabled=true`), emitted events are also written to the selected backend (`redis` or `jdbc`) and rehydrated on demand.
 
+## Agent Request Extension Hook
+
+`POST /agui/agent` uses the core `agUiAgentRequestProcessor` for methodless run orchestration.
+
+Before `run.text` dispatch, core optionally resolves a processor bean named `agUiAgentPreRunTextProcessor` and executes it.
+
+This keeps core transport/orchestration content-agnostic while allowing samples (or adopters) to attach widget or domain-specific behavior outside the core module.
+
 ## Core Runtime Beans
 
 - `agUiJsonRpcEnvelopeProcessor`

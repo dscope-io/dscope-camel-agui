@@ -6,6 +6,7 @@ This repository provides:
 
 - A reusable Camel component (`agui:`) for producer/consumer integration.
 - A protocol service runtime with JSON-RPC 2.0 request handling, SSE event streaming, and optional WebSocket scaffolding.
+- Transport compatibility modes for both split endpoints (`/agui/rpc` + `/agui/stream/{runId}`) and single-endpoint POST+SSE (`/agui/agent`).
 - Core AG-UI event model covering lifecycle, text, tool, state, and interrupt/resume events.
 - In-memory session/state services with pluggable SPI interfaces.
 - Optional persistence-backed session/state services via shared `camel-persistence` backends.
@@ -30,6 +31,10 @@ camel-ag-ui/
 
 ## Quick Start
 
+AGUI Dojo integration guide for this sample:
+
+- `samples/ag-ui-yaml-service/README.md`
+
 ### Prerequisites
 
 - Java 21+
@@ -53,9 +58,13 @@ mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceRedisTest -Dcamel.
 
 ### Run Sample Runtime
 
+Configuration defaults are loaded from `samples/ag-ui-yaml-service/src/main/resources/application.yaml`; any JVM `-D...` system properties override those values at runtime.
+
+Example override: `mvn -DskipTests compile exec:java -Dagui.health.port=9080 -Dagui.rpc.port=9080`
+
 ```bash
 cd samples/ag-ui-yaml-service
-mvn exec:java
+mvn -DskipTests compile exec:java
 ```
 
 ### Persistence Quickstart
@@ -64,20 +73,20 @@ JDBC mode (embedded Derby):
 
 ```bash
 cd samples/ag-ui-yaml-service
-mvn exec:java -Dcamel.persistence.enabled=true -Dcamel.persistence.backend=jdbc -Dcamel.persistence.jdbc.url=jdbc:derby:memory:agui;create=true
+mvn -DskipTests compile exec:java -Dcamel.persistence.enabled=true -Dcamel.persistence.backend=jdbc -Dcamel.persistence.jdbc.url=jdbc:derby:memory:agui;create=true
 ```
 
 Redis mode:
 
 ```bash
 cd samples/ag-ui-yaml-service
-mvn exec:java -Dcamel.persistence.enabled=true -Dcamel.persistence.backend=redis -Dcamel.persistence.redis.uri=redis://localhost:6379
+mvn -DskipTests compile exec:java -Dcamel.persistence.enabled=true -Dcamel.persistence.backend=redis -Dcamel.persistence.redis.uri=redis://localhost:6379
 ```
 
 Enable optional WebSocket scaffold route:
 
 ```bash
-mvn exec:java -Dagui.websocket.enabled=true -Dagui.websocket.path=/agui/ws
+mvn -DskipTests compile exec:java -Dagui.websocket.enabled=true -Dagui.websocket.path=/agui/ws
 ```
 
 ## Runtime Endpoints
@@ -86,9 +95,33 @@ mvn exec:java -Dagui.websocket.enabled=true -Dagui.websocket.path=/agui/ws
 |---|---|---|
 | `GET` | `http://localhost:8080/health` | Health/liveness |
 | `GET` | `http://localhost:8080/diagnostics` | Runtime diagnostics |
-| `POST` | `http://localhost:8081/agui/rpc` | JSON-RPC protocol entrypoint |
-| `GET` | `http://localhost:8081/agui/stream/{runId}` | SSE event stream |
-| `WS` | `ws://localhost:8081/agui/ws` | Optional WebSocket scaffold route (`-Dagui.websocket.enabled=true`) |
+| `GET` | `http://localhost:8080/agui/ui` | Browser UI for manual RPC + SSE visualization |
+| `POST` | `http://localhost:8080/agui/rpc` | JSON-RPC protocol entrypoint |
+| `POST` | `http://localhost:8080/agui/agent` | Single-endpoint POST+SSE transport (Dojo-style clients) |
+| `GET` | `http://localhost:8080/agui/stream/{runId}` | SSE event stream |
+| `WS` | `ws://localhost:8080/agui/ws` | Optional WebSocket scaffold route (`-Dagui.websocket.enabled=true`) |
+
+## Transport Modes
+
+### Split transport (existing)
+
+- Send JSON-RPC calls to `POST /agui/rpc`
+- Read events from `GET /agui/stream/{runId}`
+
+### Single-endpoint POST+SSE (Dojo-compatible)
+
+- Send JSON-RPC calls to `POST /agui/agent`
+- Receive `text/event-stream` response in the same HTTP call
+
+Example:
+
+```bash
+curl -N -X POST http://localhost:8080/agui/agent \
+   -H 'Content-Type: application/json' \
+   -d '{"jsonrpc":"2.0","id":"1","method":"run.start","params":{"runId":"dojo-run","sessionId":"dojo-session"}}'
+```
+
+Expected response stream includes events such as `run.started` and `step.started`.
 
 ## Persistence Configuration
 
