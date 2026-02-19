@@ -83,6 +83,59 @@ class PersistentAgUiPersistenceRedisTest {
         assertEquals(7, restored.path("count").asInt());
     }
 
+    @Test
+    void runContinuationWorksAfterSnapshotRehydrationAcrossInstances() {
+        String uri = redisUri();
+        Assumptions.assumeTrue(isRedisReachable(uri), "Redis not reachable at " + uri);
+
+        RedisFlowStateStore store = newRedisStore(uri);
+        JacksonAgUiEventCodec codec = new JacksonAgUiEventCodec();
+        RehydrationPolicy aggressiveSnapshots = new RehydrationPolicy(1, 500, 200);
+        String runId = "run-" + UUID.randomUUID();
+
+        PersistentAgUiSessionRegistry first = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
+        AgUiSession original = first.getOrCreate(runId, "thread-1");
+        original.emit(new AgUiRunStarted(runId, original.getSessionId()));
+        original.emit(new AgUiTextMessageContent(runId, original.getSessionId(), "before-restart"));
+        original.complete();
+
+        PersistentAgUiSessionRegistry second = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
+        AgUiSession rehydrated = second.getOrCreate(runId, "ignored-thread");
+        assertEquals("thread-1", rehydrated.getSessionId());
+        rehydrated.emit(new AgUiTextMessageContent(runId, rehydrated.getSessionId(), "after-restart"));
+        rehydrated.complete();
+
+        PersistentAgUiSessionRegistry third = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
+        assertNotNull(third.get(runId));
+
+        JsonNode snapshot = store.rehydrate("agui.run", runId).envelope().snapshot();
+        assertEquals("thread-1", snapshot.path("sessionId").asText());
+        assertEquals(3L, snapshot.path("sequence").asLong());
+    }
+
+    @Test
+    void eventsSinceCanBeEmptyAfterFullSnapshotRehydration() {
+        String uri = redisUri();
+        Assumptions.assumeTrue(isRedisReachable(uri), "Redis not reachable at " + uri);
+
+        RedisFlowStateStore store = newRedisStore(uri);
+        JacksonAgUiEventCodec codec = new JacksonAgUiEventCodec();
+        RehydrationPolicy aggressiveSnapshots = new RehydrationPolicy(1, 500, 200);
+        String runId = "run-" + UUID.randomUUID();
+
+        PersistentAgUiSessionRegistry first = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
+        AgUiSession session = first.getOrCreate(runId, "thread-1");
+        session.emit(new AgUiRunStarted(runId, session.getSessionId()));
+        session.emit(new AgUiTextMessageContent(runId, session.getSessionId(), "hello"));
+        session.complete();
+
+        PersistentAgUiSessionRegistry second = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
+        List<AgUiSessionEventRecord> replayed = second.eventsSince(runId, 0L, 20);
+
+        assertTrue(replayed.isEmpty());
+        assertNotNull(second.get(runId));
+    }
+
     private RedisFlowStateStore newRedisStore(String uri) {
         String prefix = "camel:agui:test:" + UUID.randomUUID().toString().replace("-", "");
         return new RedisFlowStateStore(uri, prefix);

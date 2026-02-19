@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.dscope.camel</groupId>
     <artifactId>camel-ag-ui</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>camel-ag-ui-component</artifactId>
@@ -66,19 +66,19 @@
       <dependency>
       <groupId>io.dscope.camel</groupId>
       <artifactId>camel-persistence-core</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+        <version>${persistence.version}</version>
     </dependency>
 
     <dependency>
       <groupId>io.dscope.camel</groupId>
       <artifactId>camel-persistence-jdbc</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>${persistence.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.dscope.camel</groupId>
       <artifactId>camel-persistence-redis</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>${persistence.version}</version>
       <scope>test</scope>
     </dependency>
 

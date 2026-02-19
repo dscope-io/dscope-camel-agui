@@ -74,6 +74,33 @@ class PersistentAgUiPersistenceJdbcTest {
         assertEquals(3, restored.path("count").asInt());
     }
 
+    @Test
+    void runContinuationWorksAfterSnapshotRehydrationAcrossInstances() {
+        JdbcFlowStateStore store = newJdbcStore();
+        JacksonAgUiEventCodec codec = new JacksonAgUiEventCodec();
+        RehydrationPolicy aggressiveSnapshots = new RehydrationPolicy(1, 500, 200);
+        String runId = "run-" + UUID.randomUUID();
+
+        PersistentAgUiSessionRegistry first = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
+        AgUiSession original = first.getOrCreate(runId, "thread-1");
+        original.emit(new AgUiRunStarted(runId, original.getSessionId()));
+        original.emit(new AgUiTextMessageContent(runId, original.getSessionId(), "before-restart"));
+        original.complete();
+
+        PersistentAgUiSessionRegistry second = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
+        AgUiSession rehydrated = second.getOrCreate(runId, "ignored-thread");
+        assertEquals("thread-1", rehydrated.getSessionId());
+        rehydrated.emit(new AgUiTextMessageContent(runId, rehydrated.getSessionId(), "after-restart"));
+        rehydrated.complete();
+
+        PersistentAgUiSessionRegistry third = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
+        assertNotNull(third.get(runId));
+
+        JsonNode snapshot = store.rehydrate("agui.run", runId).envelope().snapshot();
+        assertEquals("thread-1", snapshot.path("sessionId").asText());
+        assertEquals(3L, snapshot.path("sequence").asLong());
+    }
+
     private JdbcFlowStateStore newJdbcStore() {
         String dbName = "aguiPersistence" + UUID.randomUUID().toString().replace("-", "");
         return new JdbcFlowStateStore("jdbc:derby:memory:" + dbName + ";create=true", "", "");
