@@ -34,11 +34,11 @@ For downstream projects using this component:
 
 - Group: `io.dscope.camel`
 - Artifact: `camel-ag-ui`
-- Version: use your released version (for example `1.0.2`)
+- Version: use your released version (for example `1.1.0`)
 
 Default Central release in this repository publishes the root POM artifact:
 
-- `io.dscope.camel:camel-ag-ui:1.0.2`
+- `io.dscope.camel:camel-ag-ui:1.1.0`
 
 Maven:
 
@@ -46,20 +46,20 @@ Maven:
 <dependency>
 	<groupId>io.dscope.camel</groupId>
 	<artifactId>camel-ag-ui</artifactId>
-	<version>1.0.2</version>
+	<version>1.1.0</version>
 </dependency>
 ```
 
 Gradle (Groovy):
 
 ```groovy
-implementation 'io.dscope.camel:camel-ag-ui:1.0.2'
+implementation 'io.dscope.camel:camel-ag-ui:1.1.0'
 ```
 
 Gradle (Kotlin):
 
 ```kotlin
-implementation("io.dscope.camel:camel-ag-ui:1.0.2")
+implementation("io.dscope.camel:camel-ag-ui:1.1.0")
 ```
 
 If module publishing is enabled (`--include-modules`), module coordinates like `io.dscope.camel:camel-ag-ui-component:<version>` are available.
@@ -107,7 +107,7 @@ Enable persistent mode:
 
 ```bash
 -Dcamel.persistence.enabled=true
--Dcamel.persistence.backend=redis|jdbc|ic4j
+-Dcamel.persistence.backend=redis|jdbc|redis_jdbc|ic4j
 ```
 
 Redis backend example:
@@ -126,6 +126,15 @@ JDBC backend example (embedded Derby):
 -Dcamel.persistence.jdbc.url=jdbc:derby:memory:agui;create=true
 ```
 
+Redis + JDBC dehydration backend example:
+
+```bash
+-Dcamel.persistence.enabled=true
+-Dcamel.persistence.backend=redis_jdbc
+-Dcamel.persistence.redis.uri=redis://localhost:6379
+-Dcamel.persistence.jdbc.url=jdbc:derby:memory:agui;create=true
+```
+
 ## Persistence Tests
 
 Run JDBC persistence tests:
@@ -138,6 +147,12 @@ Run Redis persistence tests:
 
 ```bash
 mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceRedisTest -Dcamel.persistence.test.redis.uri=redis://localhost:6379 test
+```
+
+Run Redis-JDBC persistence tests:
+
+```bash
+mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceRedisJdbcTest -Dcamel.persistence.test.redis.uri=redis://localhost:6379 test
 ```
 
 Redis tests auto-skip if Redis is unreachable.

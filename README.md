@@ -41,11 +41,11 @@ Dependency coordinates for consumers:
 
 - Group: `io.dscope.camel`
 - Artifact: `camel-ag-ui`
-- Version: match your release (for example `1.0.2`)
+- Version: match your release (for example `1.1.0`)
 
 Current Central publish flow releases the root POM artifact:
 
-- `io.dscope.camel:camel-ag-ui:1.0.2`
+- `io.dscope.camel:camel-ag-ui:1.1.0`
 
 Maven:
 
@@ -53,20 +53,20 @@ Maven:
 <dependency>
    <groupId>io.dscope.camel</groupId>
    <artifactId>camel-ag-ui</artifactId>
-   <version>1.0.2</version>
+   <version>1.1.0</version>
 </dependency>
 ```
 
 Gradle (Groovy):
 
 ```groovy
-implementation 'io.dscope.camel:camel-ag-ui:1.0.2'
+implementation 'io.dscope.camel:camel-ag-ui:1.1.0'
 ```
 
 Gradle (Kotlin):
 
 ```kotlin
-implementation("io.dscope.camel:camel-ag-ui:1.0.2")
+implementation("io.dscope.camel:camel-ag-ui:1.1.0")
 ```
 
 If you publish module artifacts (installer `--include-modules` mode), module coordinates such as `io.dscope.camel:camel-ag-ui-component:<version>` can be used.
@@ -125,6 +125,12 @@ cd samples/ag-ui-yaml-service
 mvn -DskipTests compile exec:java -Dcamel.persistence.enabled=true -Dcamel.persistence.backend=redis -Dcamel.persistence.redis.uri=redis://localhost:6379
 ```
 
+Redis + JDBC dehydration mode (`redis_jdbc`):
+
+```bash
+mvn -DskipTests compile exec:java -Dcamel.persistence.enabled=true -Dcamel.persistence.backend=redis_jdbc -Dcamel.persistence.redis.uri=redis://localhost:6379 -Dcamel.persistence.jdbc.url=jdbc:derby:memory:agui;create=true
+```
+
 Enable optional WebSocket scaffold route:
 
 ```bash
@@ -174,7 +180,7 @@ Persistence is disabled by default. Enable it with system properties:
 
 ```bash
 -Dcamel.persistence.enabled=true
--Dcamel.persistence.backend=redis|jdbc|ic4j
+-Dcamel.persistence.backend=redis|jdbc|redis_jdbc|ic4j
 ```
 
 Common persistence properties:
@@ -192,6 +198,11 @@ JDBC backend properties:
 - `camel.persistence.jdbc.url` (example: `jdbc:derby:memory:agui;create=true`)
 - `camel.persistence.jdbc.user`
 - `camel.persistence.jdbc.password`
+
+Redis-JDBC backend behavior (`camel.persistence.backend=redis_jdbc`):
+
+- rehydrate path reads Redis first, then falls back to JDBC and warms Redis
+- append/snapshot writes use JDBC as source-of-truth and update Redis best-effort
 
 ## Supported Methods
 

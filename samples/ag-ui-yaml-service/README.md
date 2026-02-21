@@ -40,6 +40,13 @@ Quick health check:
 curl -s http://localhost:8080/health
 ```
 
+Start sample with Redis + JDBC dehydration persistence mode:
+
+```bash
+chmod +x samples/ag-ui-yaml-service/scripts/run-with-redis-jdbc-persistence.sh
+./samples/ag-ui-yaml-service/scripts/run-with-redis-jdbc-persistence.sh
+```
+
 ## 2. Prerequisites for AGUI Dojo
 
 Install:

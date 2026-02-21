@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.dscope.camel</groupId>
     <artifactId>camel-ag-ui-samples</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
   </parent>
 
   <artifactId>ag-ui-yaml-service</artifactId>
@@ -36,6 +36,11 @@
     <dependency>
       <groupId>io.dscope.camel</groupId>
       <artifactId>camel-persistence-redis</artifactId>
+      <version>${persistence.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.dscope.camel</groupId>
+      <artifactId>camel-persistence-jdbc</artifactId>
       <version>${persistence.version}</version>
     </dependency>
     <dependency>
@@ -76,6 +81,26 @@
         <version>3.2.5</version>
         <configuration>
           <useModulePath>false</useModulePath>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
         </configuration>
       </plugin>
     </plugins>

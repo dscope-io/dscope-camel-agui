@@ -11,6 +11,9 @@ mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceJdbcTest test
 
 # Persistence unit tests (Redis)
 mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceRedisTest -Dcamel.persistence.test.redis.uri=redis://localhost:6379 test
+
+# Persistence unit tests (Redis + JDBC dehydration)
+mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceRedisJdbcTest -Dcamel.persistence.test.redis.uri=redis://localhost:6379 test
 ```
 
 Redis test behavior:
@@ -78,7 +81,7 @@ curl -s "http://localhost:8080/agui/stream/demo-run?afterSequence=0&limit=100"
 
 Expected: ordered SSE event records for lifecycle, text, tool/state updates, and run completion.
 
-### 7. Persistence Sanity (JDBC/Redis)
+### 7. Persistence Sanity (JDBC/Redis/Redis-JDBC)
 
 Recommended startup command for Redis mode:
 
@@ -96,10 +99,18 @@ CAMEL_PERSISTENCE_REDIS_URI=redis://localhost:6379 \
 
 Note: `run-with-redis-persistence.sh` includes a Redis connectivity preflight check and fails fast with a clear message if Redis is unreachable.
 
+Recommended startup command for Redis+JDBC dehydration mode:
+
+```bash
+chmod +x samples/ag-ui-yaml-service/scripts/run-with-redis-jdbc-persistence.sh
+./samples/ag-ui-yaml-service/scripts/run-with-redis-jdbc-persistence.sh
+```
+
 1. Enable persistence in runtime with `-Dcamel.persistence.enabled=true`.
 2. Set backend:
    - JDBC: `-Dcamel.persistence.backend=jdbc -Dcamel.persistence.jdbc.url=jdbc:derby:memory:agui;create=true`
    - Redis: `-Dcamel.persistence.backend=redis -Dcamel.persistence.redis.uri=redis://localhost:6379`
+  - Redis-JDBC: `-Dcamel.persistence.backend=redis_jdbc -Dcamel.persistence.redis.uri=redis://localhost:6379 -Dcamel.persistence.jdbc.url=jdbc:derby:memory:agui;create=true`
 3. Start run and emit text/state updates.
 4. Restart runtime process with same backend settings.
 5. Query stream for same `runId`.

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "io.dscope.camel",
     "artifactId": "camel-ag-ui-component",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "scheme": "agui",
     "extendsScheme": "",
     "syntax": "agui:agentId",

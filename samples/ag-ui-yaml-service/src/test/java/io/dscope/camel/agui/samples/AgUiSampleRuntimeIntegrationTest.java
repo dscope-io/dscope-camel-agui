@@ -21,9 +21,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 class AgUiSampleRuntimeIntegrationTest {
 
@@ -339,6 +344,82 @@ class AgUiSampleRuntimeIntegrationTest {
         }
     }
 
+    @Test
+    void supportsRedisJdbcPersistenceRehydrationAcrossRuntimeRestart() throws Exception {
+        String redisUri = redisUri();
+        Assumptions.assumeTrue(isRedisReachable(redisUri), "Redis not reachable at " + redisUri);
+
+        String runId = "redis-jdbc-run-" + UUID.randomUUID();
+        String sessionId = "redis-jdbc-session";
+        String jdbcUrl = "jdbc:derby:memory:aguiRedisJdbc" + UUID.randomUUID().toString().replace("-", "") + ";create=true";
+        String redisPrefix = "camel:agui:sample:redis_jdbc:" + UUID.randomUUID().toString().replace("-", "");
+
+        int rpcPort = findAvailablePort();
+        int healthPort = rpcPort;
+        System.setProperty("agui.rpc.port", String.valueOf(rpcPort));
+        System.setProperty("agui.health.port", String.valueOf(healthPort));
+        System.setProperty("agui.websocket.enabled", "false");
+        System.setProperty("camel.persistence.enabled", "true");
+        System.setProperty("camel.persistence.backend", "redis_jdbc");
+        System.setProperty("camel.persistence.redis.uri", redisUri);
+        System.setProperty("camel.persistence.redis.key-prefix", redisPrefix);
+        System.setProperty("camel.persistence.jdbc.url", jdbcUrl);
+        System.setProperty("camel.persistence.jdbc.user", "");
+        System.setProperty("camel.persistence.jdbc.password", "");
+
+        HttpClient http = HttpClient.newHttpClient();
+        org.apache.camel.main.Main first = io.dscope.camel.agui.samples.Main.createRuntimeMain();
+        try {
+            first.start();
+            waitForHealth(healthPort);
+
+            postJson(http, rpcPort,
+                "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"run.start\",\"params\":{\"runId\":\"" + runId + "\",\"sessionId\":\"" + sessionId + "\"}}",
+                200,
+                "\"status\":\"started\"");
+            postJson(http, rpcPort,
+                "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"run.text\",\"params\":{\"runId\":\"" + runId + "\",\"text\":\"hello redis jdbc\"}}",
+                200,
+                "\"textLength\":16");
+            postJson(http, rpcPort,
+                "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"run.finish\",\"params\":{\"runId\":\"" + runId + "\"}}",
+                200,
+                "\"status\":\"finished\"");
+        } finally {
+            first.stop();
+        }
+
+        org.apache.camel.main.Main second = io.dscope.camel.agui.samples.Main.createRuntimeMain();
+        try {
+            second.start();
+            waitForHealth(healthPort);
+
+            HttpRequest sseRequest = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + rpcPort + "/agui/stream/" + runId + "?afterSequence=0&limit=100"))
+                .timeout(Duration.ofSeconds(5))
+                .GET()
+                .build();
+            HttpResponse<String> sseResponse = http.send(sseRequest, HttpResponse.BodyHandlers.ofString());
+
+            Assertions.assertEquals(200, sseResponse.statusCode());
+            Assertions.assertTrue(sseResponse.body().contains("event: RUN_STARTED"));
+            Assertions.assertTrue(sseResponse.body().contains("event: TEXT_MESSAGE_CONTENT"));
+            Assertions.assertTrue(sseResponse.body().contains("event: RUN_FINISHED"));
+        } finally {
+            second.stop();
+            System.clearProperty("agui.rpc.port");
+            System.clearProperty("agui.health.port");
+            System.clearProperty("agui.websocket.enabled");
+            System.clearProperty("camel.persistence.enabled");
+            System.clearProperty("camel.persistence.backend");
+            System.clearProperty("camel.persistence.redis.uri");
+            System.clearProperty("camel.persistence.redis.key-prefix");
+            System.clearProperty("camel.persistence.jdbc.url");
+            System.clearProperty("camel.persistence.jdbc.user");
+            System.clearProperty("camel.persistence.jdbc.password");
+        }
+    }
+
     private static int findAvailablePort() throws IOException {
         try (ServerSocket socket = new ServerSocket(0)) {
             return socket.getLocalPort();
@@ -380,6 +461,18 @@ class AgUiSampleRuntimeIntegrationTest {
             throw last;
         }
         throw new IllegalStateException("Runtime health endpoint did not become ready");
+    }
+
+    private static String redisUri() {
+        return System.getProperty("camel.persistence.test.redis.uri", "redis://localhost:6379");
+    }
+
+    private static boolean isRedisReachable(String uri) {
+        try (JedisPool pool = new JedisPool(uri); Jedis jedis = pool.getResource()) {
+            return "PONG".equalsIgnoreCase(jedis.ping());
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
 }

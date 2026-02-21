@@ -39,7 +39,7 @@ flowchart LR
   E --> F[text/event-stream payload]
 ```
 
-When persistence is enabled (`camel.persistence.enabled=true`), emitted events are also written to the selected backend (`redis` or `jdbc`) and rehydrated on demand.
+When persistence is enabled (`camel.persistence.enabled=true`), emitted events are also written to the selected backend (`redis`, `jdbc`, or `redis_jdbc`) and rehydrated on demand.
 
 ## Agent Request Extension Hook
 
@@ -73,3 +73,4 @@ Backend selection:
 
 - `camel.persistence.backend=redis`
 - `camel.persistence.backend=jdbc`
+- `camel.persistence.backend=redis_jdbc`
