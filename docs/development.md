@@ -33,15 +33,19 @@ Use Maven commands in this repo; use Gradle commands in downstream Gradle-based 
 For downstream projects using this component:
 
 - Group: `io.dscope.camel`
-- Artifact: `camel-ag-ui-component`
+- Artifact: `camel-ag-ui`
 - Version: use your released version (for example `1.0.1`)
+
+Default Central release in this repository publishes the root POM artifact:
+
+- `io.dscope.camel:camel-ag-ui:1.0.1`
 
 Maven:
 
 ```xml
 <dependency>
 	<groupId>io.dscope.camel</groupId>
-	<artifactId>camel-ag-ui-component</artifactId>
+	<artifactId>camel-ag-ui</artifactId>
 	<version>1.0.1</version>
 </dependency>
 ```
@@ -49,14 +53,16 @@ Maven:
 Gradle (Groovy):
 
 ```groovy
-implementation 'io.dscope.camel:camel-ag-ui-component:1.0.1'
+implementation 'io.dscope.camel:camel-ag-ui:1.0.1'
 ```
 
 Gradle (Kotlin):
 
 ```kotlin
-implementation("io.dscope.camel:camel-ag-ui-component:1.0.1")
+implementation("io.dscope.camel:camel-ag-ui:1.0.1")
 ```
+
+If module publishing is enabled (`--include-modules`), module coordinates like `io.dscope.camel:camel-ag-ui-component:<version>` are available.
 
 ## Module-by-Module
 

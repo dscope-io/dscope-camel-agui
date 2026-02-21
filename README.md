@@ -40,15 +40,19 @@ AGUI Dojo integration guide for this sample:
 Dependency coordinates for consumers:
 
 - Group: `io.dscope.camel`
-- Artifact: `camel-ag-ui-component`
+- Artifact: `camel-ag-ui`
 - Version: match your release (for example `1.0.1`)
+
+Current Central publish flow releases the root POM artifact:
+
+- `io.dscope.camel:camel-ag-ui:1.0.1`
 
 Maven:
 
 ```xml
 <dependency>
    <groupId>io.dscope.camel</groupId>
-   <artifactId>camel-ag-ui-component</artifactId>
+   <artifactId>camel-ag-ui</artifactId>
    <version>1.0.1</version>
 </dependency>
 ```
@@ -56,14 +60,16 @@ Maven:
 Gradle (Groovy):
 
 ```groovy
-implementation 'io.dscope.camel:camel-ag-ui-component:1.0.1'
+implementation 'io.dscope.camel:camel-ag-ui:1.0.1'
 ```
 
 Gradle (Kotlin):
 
 ```kotlin
-implementation("io.dscope.camel:camel-ag-ui-component:1.0.1")
+implementation("io.dscope.camel:camel-ag-ui:1.0.1")
 ```
+
+If you publish module artifacts (installer `--include-modules` mode), module coordinates such as `io.dscope.camel:camel-ag-ui-component:<version>` can be used.
 
 ### Prerequisites
 
