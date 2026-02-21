@@ -6,10 +6,11 @@
   <parent>
     <groupId>io.dscope.camel</groupId>
     <artifactId>camel-ag-ui</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
   </parent>
 
   <artifactId>camel-ag-ui-samples</artifactId>
+  <name>Camel Ag Ui Samples</name>
   <packaging>pom</packaging>
 
   <modules>
