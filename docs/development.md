@@ -6,6 +6,58 @@
 mvn clean test
 ```
 
+This repository is Maven-native (no Gradle wrapper/build files are maintained here).
+
+## Maven and Gradle Commands
+
+Maven (in this repository):
+
+```bash
+mvn clean test
+mvn -pl camel-ag-ui-component test
+mvn -f samples/ag-ui-yaml-service/pom.xml -DskipTests -Dexec.mainClass=io.dscope.camel.agui.samples.Main compile exec:java
+```
+
+Gradle equivalents (for consumers using this artifact in a Gradle project):
+
+```bash
+./gradlew clean test
+./gradlew :your-module:test
+./gradlew run
+```
+
+Use Maven commands in this repo; use Gradle commands in downstream Gradle-based projects.
+
+## Dependency Coordinates (Consumers)
+
+For downstream projects using this component:
+
+- Group: `io.dscope.camel`
+- Artifact: `camel-ag-ui-component`
+- Version: use your released version (for example `1.0.1`)
+
+Maven:
+
+```xml
+<dependency>
+	<groupId>io.dscope.camel</groupId>
+	<artifactId>camel-ag-ui-component</artifactId>
+	<version>1.0.1</version>
+</dependency>
+```
+
+Gradle (Groovy):
+
+```groovy
+implementation 'io.dscope.camel:camel-ag-ui-component:1.0.1'
+```
+
+Gradle (Kotlin):
+
+```kotlin
+implementation("io.dscope.camel:camel-ag-ui-component:1.0.1")
+```
+
 ## Module-by-Module
 
 ```bash

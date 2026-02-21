@@ -35,6 +35,36 @@ AGUI Dojo integration guide for this sample:
 
 - `samples/ag-ui-yaml-service/README.md`
 
+## Using in Other Projects
+
+Dependency coordinates for consumers:
+
+- Group: `io.dscope.camel`
+- Artifact: `camel-ag-ui-component`
+- Version: match your release (for example `1.0.1`)
+
+Maven:
+
+```xml
+<dependency>
+   <groupId>io.dscope.camel</groupId>
+   <artifactId>camel-ag-ui-component</artifactId>
+   <version>1.0.1</version>
+</dependency>
+```
+
+Gradle (Groovy):
+
+```groovy
+implementation 'io.dscope.camel:camel-ag-ui-component:1.0.1'
+```
+
+Gradle (Kotlin):
+
+```kotlin
+implementation("io.dscope.camel:camel-ag-ui-component:1.0.1")
+```
+
 ### Prerequisites
 
 - Java 21+
