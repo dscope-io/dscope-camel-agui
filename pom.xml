@@ -5,7 +5,7 @@
 
   <groupId>io.dscope.camel</groupId>
   <artifactId>camel-ag-ui</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <packaging>pom</packaging>
 
   <name>Camel Ag Ui</name>
@@ -42,7 +42,7 @@
     <camel.version>4.15.0</camel.version>
     <jackson.version>2.20.0</jackson.version>
     <junit.jupiter.version>5.10.2</junit.jupiter.version>
-    <persistence.version>1.0.0</persistence.version>
+    <persistence.version>1.0.2</persistence.version>
     <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
     <maven.javadoc.plugin.version>3.11.2</maven.javadoc.plugin.version>
     <maven.gpg.plugin.version>3.2.7</maven.gpg.plugin.version>
