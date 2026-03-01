@@ -40,6 +40,66 @@ Quick health check:
 curl -s http://localhost:8080/health
 ```
 
+## Built-in CopilotKit UI (POST + WebSocket)
+
+This sample now serves a CopilotKit-based frontend at:
+
+- `http://localhost:8080/agui/ui`
+
+Features in the page:
+
+- transport switch for `POST /agui/agent` and `WebSocket /agui/ws`,
+- AG-UI event log + assistant output log,
+- embedded CopilotKit assistant popup for guided testing.
+
+WebSocket mode requires enabling the sample's WebSocket scaffold route:
+
+```bash
+mvn -f samples/ag-ui-yaml-service/pom.xml \
+  -Dagui.websocket.enabled=true \
+  -Dagui.websocket.path=/agui/ws \
+  -DskipTests \
+  -Dexec.mainClass=io.dscope.camel.agui.samples.Main \
+  compile exec:java
+```
+
+## Playwright + JUnit UI tests
+
+UI tests are implemented with Playwright (Java) and JUnit. They validate both transports via `/agui/ui` and emit standard Surefire JUnit XML reports.
+
+Default `mvn test` excludes Playwright UI tests (fast local/CI unit test path).
+
+Run default non-UI test suite:
+
+```bash
+mvn -f samples/ag-ui-yaml-service/pom.xml test
+```
+
+Run only the Playwright UI tests:
+
+```bash
+mvn -f samples/ag-ui-yaml-service/pom.xml -Pui-e2e test
+```
+
+Reports are written under:
+
+- `samples/ag-ui-yaml-service/target/surefire-reports`
+
+### CI split example
+
+Use separate jobs/stages so UI browser tests run independently from core tests.
+
+```yaml
+jobs:
+  unit-tests:
+    steps:
+      - run: mvn -f samples/ag-ui-yaml-service/pom.xml test
+
+  ui-e2e-tests:
+    steps:
+      - run: mvn -f samples/ag-ui-yaml-service/pom.xml -Pui-e2e test
+```
+
 Start sample with Redis + JDBC dehydration persistence mode:
 
 ```bash

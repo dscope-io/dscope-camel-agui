@@ -1,5 +1,7 @@
 # Camel AG-UI Component
 
+[![AG-UI YAML Service CI](https://github.com/dscope-io/camel-ag-ui/actions/workflows/ag-ui-yaml-service-ci.yml/badge.svg)](https://github.com/dscope-io/camel-ag-ui/actions/workflows/ag-ui-yaml-service-ci.yml)
+
 Apache Camel component and sample runtime for AG-UI protocol workflows.
 
 This repository provides:

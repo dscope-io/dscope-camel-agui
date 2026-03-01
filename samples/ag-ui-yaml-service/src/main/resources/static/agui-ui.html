@@ -3,136 +3,357 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AG-UI Sample Viewer</title>
+    <title>AG-UI CopilotKit Sample UI</title>
     <style>
       :root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
       body { margin: 0; padding: 16px; background: #f8f9fb; color: #1f2937; }
       h1 { margin-top: 0; font-size: 20px; }
-      .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-      .card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+      h2 { margin: 0 0 10px 0; font-size: 16px; }
+      .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+      .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
       label { font-size: 12px; color: #4b5563; display: block; margin-bottom: 4px; }
-      input, textarea, button { font: inherit; }
-      input, textarea { border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; width: 100%; box-sizing: border-box; }
-      textarea { min-height: 80px; }
-      button { border: 1px solid #cbd5e1; background: #ffffff; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
+      input, textarea, button, select { font: inherit; }
+      input, textarea, select { border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; width: 100%; box-sizing: border-box; }
+      textarea { min-height: 80px; resize: vertical; }
+      button { border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
       button:hover { background: #f1f5f9; }
-      pre { background: #0b1020; color: #c9d1d9; padding: 10px; border-radius: 6px; overflow: auto; max-height: 280px; }
-      .cols { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+      pre { background: #0b1020; color: #c9d1d9; padding: 10px; border-radius: 6px; overflow: auto; max-height: 320px; white-space: pre-wrap; }
+      .cols { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+      .pill { border-radius: 999px; border: 1px solid #d1d5db; padding: 2px 8px; font-size: 12px; }
+      .status { font-weight: 600; }
+      .copilot-container { min-height: 48px; }
     </style>
   </head>
   <body>
-    <h1>AG-UI Sample Viewer</h1>
+    <h1>AG-UI CopilotKit Sample UI</h1>
 
     <div class="card">
+      <h2>Request Setup</h2>
       <div class="row">
-        <div style="min-width:200px; flex:1">
+        <div style="min-width: 180px; flex: 1">
+          <label for="transportMode">transport</label>
+          <select id="transportMode" data-testid="transport-mode">
+            <option value="post">POST /agui/agent</option>
+            <option value="websocket">WebSocket /agui/ws + SSE stream</option>
+          </select>
+        </div>
+        <div style="min-width: 180px; flex: 1">
           <label for="runId">runId</label>
-          <input id="runId" value="demo-run" />
+          <input id="runId" data-testid="run-id" value="demo-run" />
         </div>
-        <div style="min-width:200px; flex:1">
+        <div style="min-width: 180px; flex: 1">
           <label for="sessionId">sessionId</label>
-          <input id="sessionId" value="demo-session" />
+          <input id="sessionId" data-testid="session-id" value="demo-session" />
+        </div>
+        <div style="min-width: 180px; flex: 1">
+          <label for="threadId">threadId</label>
+          <input id="threadId" data-testid="thread-id" value="demo-thread" />
         </div>
       </div>
-      <div class="row">
-        <button id="startBtn">run.start</button>
-        <button id="textBtn">run.text</button>
-        <button id="finishBtn">run.finish</button>
-        <button id="connectBtn">Connect SSE</button>
-        <button id="clearBtn">Clear Logs</button>
+
+      <label for="promptInput">message</label>
+      <textarea id="promptInput" data-testid="prompt-input">hello from CopilotKit sample ui</textarea>
+
+      <div class="row" style="margin-top: 10px; align-items: center;">
+        <button id="sendBtn" data-testid="send-button">Send</button>
+        <button id="clearBtn" data-testid="clear-button">Clear Logs</button>
+        <span class="pill">Transport status: <span id="transportStatus" class="status" data-testid="transport-status">idle</span></span>
       </div>
-      <label for="textInput">text payload</label>
-      <textarea id="textInput">Hello from AG-UI sample viewer</textarea>
+    </div>
+
+    <div class="card">
+      <h2>CopilotKit Assistant</h2>
+      <div id="copilotRoot" class="copilot-container" data-testid="copilot-root"></div>
+      <small id="copilotStatus" data-testid="copilot-status">Loading CopilotKit UI...</small>
     </div>
 
     <div class="cols">
       <div class="card">
-        <strong>RPC Response Log</strong>
-        <pre id="rpcLog"></pre>
+        <strong>Transport Log</strong>
+        <pre id="transportLog" data-testid="transport-log"></pre>
       </div>
       <div class="card">
-        <strong>SSE Event Log</strong>
-        <pre id="sseLog"></pre>
+        <strong>Event Log</strong>
+        <pre id="eventLog" data-testid="event-log"></pre>
+      </div>
+      <div class="card">
+        <strong>Assistant Output</strong>
+        <pre id="assistantLog" data-testid="assistant-log"></pre>
       </div>
     </div>
 
     <script>
-      const rpcUrl = '/agui/rpc';
-      const rpcLog = document.getElementById('rpcLog');
-      const sseLog = document.getElementById('sseLog');
+      const transportMode = document.getElementById('transportMode');
+      const runIdInput = document.getElementById('runId');
+      const sessionIdInput = document.getElementById('sessionId');
+      const threadIdInput = document.getElementById('threadId');
+      const promptInput = document.getElementById('promptInput');
+      const sendBtn = document.getElementById('sendBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const transportStatus = document.getElementById('transportStatus');
+
+      const transportLog = document.getElementById('transportLog');
+      const eventLog = document.getElementById('eventLog');
+      const assistantLog = document.getElementById('assistantLog');
+
+      let ws;
       let sse;
 
       function now() {
         return new Date().toISOString();
       }
 
-      function appendLog(el, value) {
-        el.textContent += `[${now()}] ${value}\n`;
-        el.scrollTop = el.scrollHeight;
+      function appendLog(target, message) {
+        target.textContent += `[${now()}] ${message}\n`;
+        target.scrollTop = target.scrollHeight;
       }
 
-      function getRunId() {
-        return document.getElementById('runId').value.trim();
+      function setStatus(value) {
+        transportStatus.textContent = value;
       }
 
-      function getSessionId() {
-        return document.getElementById('sessionId').value.trim();
+      function currentRunId() {
+        return runIdInput.value.trim() || `run-${Date.now()}`;
       }
 
-      async function callRpc(id, method, params) {
-        const payload = { jsonrpc: '2.0', id, method, params };
-        const response = await fetch(rpcUrl, {
+      function currentSessionId() {
+        return sessionIdInput.value.trim() || `session-${Date.now()}`;
+      }
+
+      function currentThreadId() {
+        return threadIdInput.value.trim() || `thread-${Date.now()}`;
+      }
+
+      function currentPrompt() {
+        return promptInput.value.trim();
+      }
+
+      function closeTransports() {
+        if (sse) {
+          sse.close();
+          sse = undefined;
+        }
+        if (ws) {
+          ws.close();
+          ws = undefined;
+        }
+      }
+
+      function appendEventLine(line) {
+        appendLog(eventLog, line);
+      }
+
+      function parseSseBody(body) {
+        const lines = body.split(/\r?\n/);
+        let currentEvent = '';
+        let currentData = '';
+
+        for (const line of lines) {
+          if (line.startsWith('event:')) {
+            currentEvent = line.slice('event:'.length).trim();
+          } else if (line.startsWith('data:')) {
+            currentData += line.slice('data:'.length).trim();
+          } else if (!line.trim()) {
+            if (currentEvent || currentData) {
+              appendEventLine(`${currentEvent || 'message'} ${currentData}`);
+              if (currentEvent === 'TEXT_MESSAGE_CONTENT') {
+                appendLog(assistantLog, currentData);
+              }
+            }
+            currentEvent = '';
+            currentData = '';
+          }
+        }
+      }
+
+      function attachSse(runId) {
+        if (sse) {
+          sse.close();
+        }
+        sse = new EventSource(`/agui/stream/${encodeURIComponent(runId)}?afterSequence=0&limit=200`);
+        appendLog(transportLog, `SSE connected for runId=${runId}`);
+
+        sse.onmessage = (event) => appendEventLine(`message ${event.data}`);
+        sse.onerror = () => appendLog(transportLog, 'SSE connection error/closed');
+
+        ['RUN_STARTED', 'STEP_STARTED', 'TEXT_MESSAGE_START', 'TEXT_MESSAGE_CONTENT', 'TEXT_MESSAGE_END', 'RUN_FINISHED', 'TOOL_CALL_START', 'TOOL_CALL_ARGS', 'TOOL_CALL_RESULT', 'TOOL_CALL_END']
+          .forEach((eventType) => {
+            sse.addEventListener(eventType, (event) => {
+              appendEventLine(`${eventType} ${event.data}`);
+              if (eventType === 'TEXT_MESSAGE_CONTENT') {
+                appendLog(assistantLog, event.data);
+              }
+            });
+          });
+      }
+
+      async function sendViaPost() {
+        const runId = currentRunId();
+        const sessionId = currentSessionId();
+        const threadId = currentThreadId();
+        const prompt = currentPrompt();
+        setStatus('sending-post');
+
+        const payload = {
+          runId,
+          sessionId,
+          threadId,
+          messages: [{ role: 'user', content: prompt }]
+        };
+
+        appendLog(transportLog, `POST /agui/agent payload=${JSON.stringify(payload)}`);
+        const response = await fetch('/agui/agent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
         const body = await response.text();
-        appendLog(rpcLog, `${method} => HTTP ${response.status} ${body}`);
+        appendLog(transportLog, `POST /agui/agent -> HTTP ${response.status}`);
+        if (!response.ok) {
+          appendLog(assistantLog, `POST failed: ${body}`);
+          setStatus('post-failed');
+          return;
+        }
+
+        parseSseBody(body);
+        setStatus('post-complete');
       }
 
-      document.getElementById('startBtn').addEventListener('click', () => {
-        callRpc('1', 'run.start', { runId: getRunId(), sessionId: getSessionId() })
-          .catch(e => appendLog(rpcLog, `run.start error: ${e.message}`));
-      });
+      function createWebSocketUrl() {
+        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        return `${protocol}://${window.location.host}/agui/ws`;
+      }
 
-      document.getElementById('textBtn').addEventListener('click', () => {
-        const text = document.getElementById('textInput').value;
-        callRpc('2', 'run.text', { runId: getRunId(), text })
-          .catch(e => appendLog(rpcLog, `run.text error: ${e.message}`));
-      });
+      async function sendViaWebSocket() {
+        const runId = currentRunId();
+        const sessionId = currentSessionId();
+        const prompt = currentPrompt();
 
-      document.getElementById('finishBtn').addEventListener('click', () => {
-        callRpc('3', 'run.finish', { runId: getRunId() })
-          .catch(e => appendLog(rpcLog, `run.finish error: ${e.message}`));
-      });
+        closeTransports();
+        attachSse(runId);
 
-      document.getElementById('connectBtn').addEventListener('click', () => {
-        const runId = encodeURIComponent(getRunId());
-        if (sse) {
-          sse.close();
-        }
-        sse = new EventSource(`/agui/stream/${runId}?afterSequence=0&limit=200`);
-        appendLog(sseLog, `SSE connected for runId=${runId}`);
+        const wsUrl = createWebSocketUrl();
+        setStatus('opening-websocket');
+        appendLog(transportLog, `Opening WebSocket ${wsUrl}`);
 
-        sse.onmessage = (event) => {
-          appendLog(sseLog, `message: ${event.data}`);
-        };
-
-        ['run.started', 'step.started', 'text.message.start', 'text.message.content', 'text.message.end', 'run.finished'].forEach((evt) => {
-          sse.addEventListener(evt, (event) => {
-            appendLog(sseLog, `${evt}: ${event.data}`);
-          });
+        await new Promise((resolve, reject) => {
+          ws = new WebSocket(wsUrl);
+          ws.onopen = () => resolve();
+          ws.onerror = (event) => reject(new Error(`WebSocket connection failed: ${event.type}`));
         });
 
-        sse.onerror = () => {
-          appendLog(sseLog, 'SSE error/closed');
-        };
+        setStatus('websocket-open');
+        ws.onmessage = (event) => appendLog(transportLog, `WS message ${event.data}`);
+        ws.onerror = (event) => appendLog(transportLog, `WS error ${event.type}`);
+        ws.onclose = () => appendLog(transportLog, 'WS closed');
+
+        const frames = [
+          {
+            jsonrpc: '2.0',
+            id: 'ws-1',
+            method: 'run.start',
+            params: { runId, sessionId }
+          },
+          {
+            jsonrpc: '2.0',
+            id: 'ws-2',
+            method: 'run.text',
+            params: { runId, text: prompt }
+          },
+          {
+            jsonrpc: '2.0',
+            id: 'ws-3',
+            method: 'run.finish',
+            params: { runId }
+          }
+        ];
+
+        for (const frame of frames) {
+          const payload = JSON.stringify(frame);
+          appendLog(transportLog, `WS send ${payload}`);
+          ws.send(payload);
+        }
+
+        setStatus('websocket-complete');
+      }
+
+      sendBtn.addEventListener('click', async () => {
+        try {
+          const mode = transportMode.value;
+          if (mode === 'websocket') {
+            await sendViaWebSocket();
+          } else {
+            await sendViaPost();
+          }
+        } catch (error) {
+          setStatus('error');
+          appendLog(transportLog, `Transport error: ${error.message}`);
+        }
       });
 
-      document.getElementById('clearBtn').addEventListener('click', () => {
-        rpcLog.textContent = '';
-        sseLog.textContent = '';
+      clearBtn.addEventListener('click', () => {
+        transportLog.textContent = '';
+        eventLog.textContent = '';
+        assistantLog.textContent = '';
+        setStatus('idle');
       });
+
+      window.addEventListener('beforeunload', closeTransports);
+    </script>
+
+    <script type="module">
+      const copilotStatus = document.getElementById('copilotStatus');
+      const copilotRootEl = document.getElementById('copilotRoot');
+
+      try {
+        const React = await import('https://esm.sh/react@18.3.1');
+        const ReactDOM = await import('https://esm.sh/react-dom@18.3.1/client');
+        const ReactCore = await import('https://esm.sh/@copilotkit/react-core@1.52.1');
+        const ReactUi = await import('https://esm.sh/@copilotkit/react-ui@1.52.1');
+        await import('https://esm.sh/@copilotkit/react-ui@1.52.1/dist/style.css');
+
+        const { createElement } = React;
+        const { createRoot } = ReactDOM;
+        const { CopilotKit, useCopilotAction } = ReactCore;
+        const { CopilotPopup } = ReactUi;
+
+        function CopilotBridge() {
+          useCopilotAction({
+            name: 'set_transport_mode',
+            description: 'Set AG-UI transport to post or websocket',
+            parameters: [
+              {
+                name: 'mode',
+                type: 'string',
+                description: 'Transport mode, either post or websocket',
+                required: true
+              }
+            ],
+            handler: ({ mode }) => {
+              const normalized = String(mode || '').toLowerCase();
+              const select = document.getElementById('transportMode');
+              if (normalized === 'websocket' || normalized === 'post') {
+                select.value = normalized;
+              }
+              return `Transport set to ${select.value}`;
+            }
+          });
+
+          return createElement(CopilotPopup, {
+            labels: {
+              title: 'CopilotKit Assistant',
+              initial: 'Need help testing POST/WebSocket AG-UI flows?'
+            },
+            instructions: 'Help the user test the AG-UI sample. Suggest weather and sports prompts.'
+          });
+        }
+
+        const root = createRoot(copilotRootEl);
+        root.render(createElement(CopilotKit, null, createElement(CopilotBridge)));
+        copilotStatus.textContent = 'CopilotKit loaded.';
+      } catch (error) {
+        copilotStatus.textContent = `CopilotKit unavailable in this environment: ${error.message}`;
+      }
     </script>
   </body>
 </html>

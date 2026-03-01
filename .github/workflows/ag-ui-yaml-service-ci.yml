@@ -1,0 +1,71 @@
+name: AG-UI YAML Service CI
+
+on:
+  push:
+    paths:
+      - "samples/ag-ui-yaml-service/**"
+      - "camel-ag-ui-component/**"
+      - "pom.xml"
+      - "samples/pom.xml"
+      - ".github/workflows/ag-ui-yaml-service-ci.yml"
+  pull_request:
+    paths:
+      - "samples/ag-ui-yaml-service/**"
+      - "camel-ag-ui-component/**"
+      - "pom.xml"
+      - "samples/pom.xml"
+      - ".github/workflows/ag-ui-yaml-service-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run default test suite (no UI E2E)
+        run: mvn -B -ntp -f samples/ag-ui-yaml-service/pom.xml test
+
+      - name: Upload Surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-unit-tests
+          path: samples/ag-ui-yaml-service/target/surefire-reports/**
+
+  ui-e2e-tests:
+    name: UI E2E Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run Playwright UI E2E suite
+        env:
+          CI: "true"
+        run: mvn -B -ntp -f samples/ag-ui-yaml-service/pom.xml -Pui-e2e test
+
+      - name: Upload Surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-ui-e2e
+          path: samples/ag-ui-yaml-service/target/surefire-reports/**
