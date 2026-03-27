@@ -206,6 +206,10 @@ public class AgUiAgentEnvelopeProcessor implements Processor {
             if (directText != null) {
                 return directText;
             }
+            String stateText = findText(map.get("state"));
+            if (stateText != null) {
+                return stateText;
+            }
             String messagesText = findText(map.get("messages"));
             if (messagesText != null) {
                 return messagesText;
@@ -217,6 +221,10 @@ public class AgUiAgentEnvelopeProcessor implements Processor {
             return findText(map.get("data"));
         }
         if (node instanceof List<?> list) {
+            String lastUserText = findLastUserText(list);
+            if (lastUserText != null) {
+                return lastUserText;
+            }
             for (int index = list.size() - 1; index >= 0; index--) {
                 String text = findText(list.get(index));
                 if (text != null) {
@@ -224,6 +232,26 @@ public class AgUiAgentEnvelopeProcessor implements Processor {
                 }
             }
             return null;
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private String findLastUserText(List<?> list) {
+        for (int index = list.size() - 1; index >= 0; index--) {
+            Object item = list.get(index);
+            if (!(item instanceof Map<?, ?> rawMap)) {
+                continue;
+            }
+            Map<String, Object> map = (Map<String, Object>) rawMap;
+            Object role = map.get("role");
+            if (role == null || !"user".equalsIgnoreCase(role.toString())) {
+                continue;
+            }
+            String text = findText(map);
+            if (text != null) {
+                return text;
+            }
         }
         return null;
     }
