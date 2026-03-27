@@ -14,7 +14,6 @@ derby.log
 *.sha256
 *.sha512
 *.lck
-*.LCK*
 secring.gpg
 *.secring.gpg
 maven-central.properties
