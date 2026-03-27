@@ -1,14 +1,16 @@
 package io.dscope.camel.agui;
 
-import io.dscope.camel.agui.config.AgUiExchangeProperties;
-import io.dscope.camel.agui.processor.AgUiAgentEnvelopeProcessor;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import io.dscope.camel.agui.config.AgUiExchangeProperties;
+import io.dscope.camel.agui.processor.AgUiAgentEnvelopeProcessor;
 
 class AgUiAgentEnvelopeProcessorTest {
 
