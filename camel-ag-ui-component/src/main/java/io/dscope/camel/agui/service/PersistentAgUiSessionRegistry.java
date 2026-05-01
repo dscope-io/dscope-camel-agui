@@ -14,14 +14,6 @@
 
 package io.dscope.camel.agui.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dscope.camel.agui.model.AgUiEvent;
-import io.dscope.camel.agui.model.AgUiRunError;
-import io.dscope.camel.persistence.core.FlowStateStore;
-import io.dscope.camel.persistence.core.PersistedEvent;
-import io.dscope.camel.persistence.core.RehydrationPolicy;
-import io.dscope.camel.persistence.core.exception.OptimisticConflictException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +21,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.dscope.camel.agui.model.AgUiEvent;
+import io.dscope.camel.agui.model.AgUiRunError;
+import io.dscope.camel.persistence.core.FlowStateStore;
+import io.dscope.camel.persistence.core.PersistedEvent;
+import io.dscope.camel.persistence.core.RehydrationPolicy;
+import io.dscope.camel.persistence.core.exception.OptimisticConflictException;
 
 public class PersistentAgUiSessionRegistry implements AgUiSessionRegistry {
 

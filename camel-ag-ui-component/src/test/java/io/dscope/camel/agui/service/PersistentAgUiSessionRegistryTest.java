@@ -14,10 +14,18 @@
 
 package io.dscope.camel.agui.service;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.dscope.camel.agui.model.AgUiTextMessageContent;
 import io.dscope.camel.persistence.core.AppendResult;
 import io.dscope.camel.persistence.core.FlowStateStore;
@@ -26,12 +34,6 @@ import io.dscope.camel.persistence.core.RehydratedState;
 import io.dscope.camel.persistence.core.RehydrationPolicy;
 import io.dscope.camel.persistence.core.StateEnvelope;
 import io.dscope.camel.persistence.core.exception.OptimisticConflictException;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
 
 class PersistentAgUiSessionRegistryTest {
 
