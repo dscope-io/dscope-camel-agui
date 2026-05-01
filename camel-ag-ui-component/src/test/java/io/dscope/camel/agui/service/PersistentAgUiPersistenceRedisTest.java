@@ -114,7 +114,7 @@ class PersistentAgUiPersistenceRedisTest {
     }
 
     @Test
-    void eventsSinceCanBeEmptyAfterFullSnapshotRehydration() {
+    void eventsSinceReplaysEventsAfterFullSnapshotRehydration() {
         String uri = redisUri();
         Assumptions.assumeTrue(isRedisReachable(uri), "Redis not reachable at " + uri);
 
@@ -132,7 +132,9 @@ class PersistentAgUiPersistenceRedisTest {
         PersistentAgUiSessionRegistry second = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
         List<AgUiSessionEventRecord> replayed = second.eventsSince(runId, 0L, 20);
 
-        assertTrue(replayed.isEmpty());
+        assertEquals(2, replayed.size());
+        assertEquals("RUN_STARTED", replayed.get(0).eventType());
+        assertTrue(replayed.get(1).json().contains("hello"));
         assertNotNull(second.get(runId));
     }
 

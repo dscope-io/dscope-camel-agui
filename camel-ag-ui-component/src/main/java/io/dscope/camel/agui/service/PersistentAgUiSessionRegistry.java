@@ -22,7 +22,6 @@ import io.dscope.camel.persistence.core.FlowStateStore;
 import io.dscope.camel.persistence.core.PersistedEvent;
 import io.dscope.camel.persistence.core.RehydrationPolicy;
 import io.dscope.camel.persistence.core.exception.OptimisticConflictException;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +63,23 @@ public class PersistentAgUiSessionRegistry implements AgUiSessionRegistry {
 
     @Override
     public List<AgUiSessionEventRecord> eventsSince(String runId, long afterSequence, int limit) {
+        int resolved = Math.max(1, limit);
+        List<AgUiSessionEventRecord> persisted = new ArrayList<>();
+        for (PersistedEvent event : stateStore.readEvents(FLOW_TYPE, runId, afterSequence, resolved)) {
+            AgUiSessionEventRecord record = toRecord(event);
+            if (record != null) {
+                persisted.add(record);
+            }
+        }
+        if (!persisted.isEmpty()) {
+            return persisted;
+        }
+
         SessionState state = sessions.computeIfAbsent(runId, ignored -> hydrateOrCreate(runId, null));
         if (!state.loaded()) {
             return List.of();
         }
-        return state.eventsSince(afterSequence, limit);
+        return state.eventsSince(afterSequence, resolved);
     }
 
     @Override
@@ -94,6 +105,16 @@ public class PersistentAgUiSessionRegistry implements AgUiSessionRegistry {
             state.replay(event);
         }
         return state;
+    }
+
+    private AgUiSessionEventRecord toRecord(PersistedEvent persistedEvent) {
+        JsonNode payload = persistedEvent.payload();
+        if (payload == null || payload.path("json").isMissingNode()) {
+            return null;
+        }
+        String eventType = payload.path("eventType").asText("message");
+        String json = payload.path("json").asText("{}");
+        return new AgUiSessionEventRecord(persistedEvent.sequence(), eventType, json);
     }
 
     private final class SessionState implements AgUiSession {
@@ -185,15 +206,12 @@ public class PersistentAgUiSessionRegistry implements AgUiSessionRegistry {
         }
 
         private synchronized void replay(PersistedEvent persistedEvent) {
-            JsonNode payload = persistedEvent.payload();
-            if (payload == null || payload.path("json").isMissingNode()) {
+            AgUiSessionEventRecord record = toRecord(persistedEvent);
+            if (record == null) {
                 return;
             }
-            long seq = persistedEvent.sequence();
-            String eventType = payload.path("eventType").asText("message");
-            String json = payload.path("json").asText("{}");
-            events.add(new AgUiSessionEventRecord(seq, eventType, json));
-            sequence.set(Math.max(sequence.get(), seq));
+            events.add(record);
+            sequence.set(Math.max(sequence.get(), record.sequence()));
             loaded = true;
         }
 
