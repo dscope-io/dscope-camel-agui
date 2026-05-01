@@ -169,7 +169,7 @@ public class PersistentAgUiSessionRegistry implements AgUiSessionRegistry {
             try {
                 stateStore.appendEvents(FLOW_TYPE, runId, next - 1, List.of(persistedEvent), null);
             } catch (OptimisticConflictException conflict) {
-                long actual = stateStore.rehydrate(FLOW_TYPE, runId).tailEvents().size();
+                long actual = stateStore.rehydrate(FLOW_TYPE, runId).envelope().version();
                 stateStore.appendEvents(FLOW_TYPE, runId, actual, List.of(persistedEvent), null);
             }
 
