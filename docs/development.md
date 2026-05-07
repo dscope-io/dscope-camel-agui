@@ -34,11 +34,11 @@ For downstream projects using this component:
 
 - Group: `io.dscope.camel`
 - Artifact: `camel-ag-ui`
-- Version: use your released version (for example `1.2.0`)
+- Version: use your released version (for example `1.3.0`)
 
 Default Central release in this repository publishes the root POM artifact:
 
-- `io.dscope.camel:camel-ag-ui:1.2.0`
+- `io.dscope.camel:camel-ag-ui:1.3.0`
 
 Maven:
 
@@ -46,20 +46,20 @@ Maven:
 <dependency>
 	<groupId>io.dscope.camel</groupId>
 	<artifactId>camel-ag-ui</artifactId>
-	<version>1.2.0</version>
+	<version>1.3.0</version>
 </dependency>
 ```
 
 Gradle (Groovy):
 
 ```groovy
-implementation 'io.dscope.camel:camel-ag-ui:1.2.0'
+implementation 'io.dscope.camel:camel-ag-ui:1.3.0'
 ```
 
 Gradle (Kotlin):
 
 ```kotlin
-implementation("io.dscope.camel:camel-ag-ui:1.2.0")
+implementation("io.dscope.camel:camel-ag-ui:1.3.0")
 ```
 
 If module publishing is enabled (`--include-modules`), module coordinates like `io.dscope.camel:camel-ag-ui-component:<version>` are available.

@@ -43,11 +43,11 @@ Dependency coordinates for consumers:
 
 - Group: `io.dscope.camel`
 - Artifact: `camel-ag-ui`
-- Version: match your release (for example `1.2.0`)
+- Version: match your release (for example `1.3.0`)
 
 Current Central publish flow releases the root POM artifact:
 
-- `io.dscope.camel:camel-ag-ui:1.2.0`
+- `io.dscope.camel:camel-ag-ui:1.3.0`
 
 Maven:
 
@@ -55,20 +55,20 @@ Maven:
 <dependency>
    <groupId>io.dscope.camel</groupId>
    <artifactId>camel-ag-ui</artifactId>
-   <version>1.2.0</version>
+   <version>1.3.0</version>
 </dependency>
 ```
 
 Gradle (Groovy):
 
 ```groovy
-implementation 'io.dscope.camel:camel-ag-ui:1.2.0'
+implementation 'io.dscope.camel:camel-ag-ui:1.3.0'
 ```
 
 Gradle (Kotlin):
 
 ```kotlin
-implementation("io.dscope.camel:camel-ag-ui:1.2.0")
+implementation("io.dscope.camel:camel-ag-ui:1.3.0")
 ```
 
 If you publish module artifacts (installer `--include-modules` mode), module coordinates such as `io.dscope.camel:camel-ag-ui-component:<version>` can be used.
