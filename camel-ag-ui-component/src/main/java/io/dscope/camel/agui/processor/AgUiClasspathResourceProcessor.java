@@ -2,6 +2,7 @@ package io.dscope.camel.agui.processor;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -10,6 +11,36 @@ import org.apache.camel.Processor;
 public class AgUiClasspathResourceProcessor implements Processor {
 
     public static final String DEFAULT_RESOURCE_PATH_HEADER = "AgUiResourcePath";
+
+    private static final Map<String, String> DEFAULT_CONTENT_TYPES = Map.ofEntries(
+        Map.entry(".html", "text/html; charset=UTF-8"),
+        Map.entry(".htm", "text/html; charset=UTF-8"),
+        Map.entry(".css", "text/css; charset=UTF-8"),
+        Map.entry(".js", "application/javascript; charset=UTF-8"),
+        Map.entry(".mjs", "application/javascript; charset=UTF-8"),
+        Map.entry(".json", "application/json; charset=UTF-8"),
+        Map.entry(".map", "application/json; charset=UTF-8"),
+        Map.entry(".webmanifest", "application/manifest+json; charset=UTF-8"),
+        Map.entry(".txt", "text/plain; charset=UTF-8"),
+        Map.entry(".md", "text/markdown; charset=UTF-8"),
+        Map.entry(".csv", "text/csv; charset=UTF-8"),
+        Map.entry(".xml", "application/xml; charset=UTF-8"),
+        Map.entry(".svg", "image/svg+xml; charset=UTF-8"),
+        Map.entry(".png", "image/png"),
+        Map.entry(".jpg", "image/jpeg"),
+        Map.entry(".jpeg", "image/jpeg"),
+        Map.entry(".gif", "image/gif"),
+        Map.entry(".webp", "image/webp"),
+        Map.entry(".avif", "image/avif"),
+        Map.entry(".ico", "image/x-icon"),
+        Map.entry(".wasm", "application/wasm"),
+        Map.entry(".woff", "font/woff"),
+        Map.entry(".woff2", "font/woff2"),
+        Map.entry(".ttf", "font/ttf"),
+        Map.entry(".otf", "font/otf"),
+        Map.entry(".eot", "application/vnd.ms-fontobject"),
+        Map.entry(".pdf", "application/pdf")
+    );
 
     private final String resourcePathHeader;
     private final String allowedRootPrefix;
@@ -43,31 +74,35 @@ public class AgUiClasspathResourceProcessor implements Processor {
                 notFound(exchange);
                 return;
             }
-            exchange.getMessage().setBody(new String(input.readAllBytes(), StandardCharsets.UTF_8));
+            byte[] bytes = input.readAllBytes();
+            String contentType = contentType(resourcePath);
+            exchange.getMessage().setBody(isTextContent(contentType) ? new String(bytes, StandardCharsets.UTF_8) : bytes);
             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
-            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType(resourcePath));
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType);
         }
     }
 
     private String contentType(String resourcePath) {
+        String normalized = resourcePath.toLowerCase(Locale.ROOT);
         for (Map.Entry<String, String> entry : contentTypes.entrySet()) {
-            if (resourcePath.endsWith(entry.getKey())) {
+            if (normalized.endsWith(entry.getKey().toLowerCase(Locale.ROOT))) {
                 return entry.getValue();
             }
         }
-        if (resourcePath.endsWith(".html")) {
-            return "text/html; charset=UTF-8";
-        }
-        if (resourcePath.endsWith(".css")) {
-            return "text/css; charset=UTF-8";
-        }
-        if (resourcePath.endsWith(".js")) {
-            return "application/javascript; charset=UTF-8";
-        }
-        if (resourcePath.endsWith(".json")) {
-            return "application/json; charset=UTF-8";
+        for (Map.Entry<String, String> entry : DEFAULT_CONTENT_TYPES.entrySet()) {
+            if (normalized.endsWith(entry.getKey())) {
+                return entry.getValue();
+            }
         }
         return "text/plain; charset=UTF-8";
+    }
+
+    private boolean isTextContent(String contentType) {
+        return contentType.startsWith("text/")
+            || contentType.contains("charset=")
+            || contentType.startsWith("application/json")
+            || contentType.startsWith("application/javascript")
+            || contentType.startsWith("application/xml");
     }
 
     private void notFound(Exchange exchange) {
