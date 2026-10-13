@@ -22,11 +22,11 @@ public class AgUiStateDeltaCalculator {
 
     public List<Map<String, Object>> toJsonPatch(JsonNode previous, JsonNode current) {
         if (previous == null) {
-            return List.of(Map.of("op", "add", "path", "/", "value", current));
+            return List.of(Map.of("op", "add", "path", "", "value", current));
         }
         if (previous.equals(current)) {
             return List.of();
         }
-        return List.of(Map.of("op", "replace", "path", "/", "value", current));
+        return List.of(Map.of("op", "replace", "path", "", "value", current));
     }
 }

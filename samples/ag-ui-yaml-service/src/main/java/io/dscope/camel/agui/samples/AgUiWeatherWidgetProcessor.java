@@ -104,16 +104,16 @@ final class AgUiWeatherWidgetProcessor extends AbstractAgUiAgentWidgetProcessor 
         applyIfPresent(args, "setDelta", String.class, argsDelta);
         session.emit(args);
 
+        AgUiToolCallEnd end = new AgUiToolCallEnd(runId, sessionId, WEATHER_TOOL_NAME);
+        applyIfPresent(end, "setToolCallId", String.class, toolCallId);
+        session.emit(end);
+
         AgUiToolCallResult result = new AgUiToolCallResult(runId, sessionId, resultContent);
         applyIfPresent(result, "setMessageId", String.class, toolMessageId);
         applyIfPresent(result, "setToolCallId", String.class, toolCallId);
         applyIfPresent(result, "setContent", String.class, resultContent);
         applyIfPresent(result, "setRole", String.class, "tool");
         session.emit(result);
-
-        AgUiToolCallEnd end = new AgUiToolCallEnd(runId, sessionId, WEATHER_TOOL_NAME);
-        applyIfPresent(end, "setToolCallId", String.class, toolCallId);
-        session.emit(end);
     }
 
     private static void applyIfPresent(Object target, String method, Class<?> argType, Object value) {

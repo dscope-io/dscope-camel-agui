@@ -33,6 +33,37 @@ import redis.clients.jedis.JedisPool;
 class AgUiSampleRuntimeIntegrationTest {
 
     @Test
+    void standardSampleDemonstratesAllConfiguredFeatures() throws Exception {
+        int port = findAvailablePort();
+        System.setProperty("agui.rpc.port", String.valueOf(port));
+        System.setProperty("agui.health.port", String.valueOf(port));
+        var runtime = Main.createRuntimeMain();
+        try {
+            runtime.start();
+            var http = HttpClient.newHttpClient();
+            String input = "{\"threadId\":\"demo\",\"runId\":\"demo\",\"messages\":[{\"id\":\"user\",\"role\":\"user\",\"content\":\"demo 1.0\"}]}";
+            var response = http.send(HttpRequest.newBuilder(URI.create("http://localhost:"+port+"/agui/agent"))
+                .header("Content-Type","application/json").header("Accept","text/event-stream")
+                .POST(HttpRequest.BodyPublishers.ofString(input)).build(), HttpResponse.BodyHandlers.ofInputStream());
+            Assertions.assertEquals(200,response.statusCode());
+            var pipeline = new io.dscope.camel.agui.protocol.AgUiEventPipeline(true,message->{});
+            try(var stream=response.body()) {
+                io.dscope.camel.agui.protocol.AgUiSseReader.read(stream,pipeline::accept);
+            }
+            pipeline.endOfStream();
+            Assertions.assertFalse(pipeline.isFailed(), pipeline.result().outcome().toString());
+            Assertions.assertEquals(2,pipeline.result().subagents().size());
+            Assertions.assertTrue(pipeline.result().messages().stream().anyMatch(m->m.path("role").asText().equals("reasoning")));
+            Assertions.assertTrue(pipeline.result().messages().stream().anyMatch(m->m.path("content").isArray()));
+            var capabilities=http.send(HttpRequest.newBuilder(URI.create("http://localhost:"+port+"/agui/capabilities")).GET().build(),HttpResponse.BodyHandlers.ofString());
+            Assertions.assertEquals(200,capabilities.statusCode());
+            io.dscope.camel.agui.protocol.AgUiSchema.validate("AgentCapabilities",io.dscope.camel.agui.protocol.AgUiSchema.MAPPER.readTree(capabilities.body()),true);
+        } finally {
+            runtime.stop();System.clearProperty("agui.rpc.port");System.clearProperty("agui.health.port");
+        }
+    }
+
+    @Test
     void supportsRpcAndSseEndToEnd() throws Exception {
         int rpcPort = findAvailablePort();
         int healthPort = rpcPort;
@@ -137,7 +168,7 @@ class AgUiSampleRuntimeIntegrationTest {
 
             HttpClient http = HttpClient.newHttpClient();
             HttpRequest postSseRequest = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + rpcPort + "/agui/agent"))
+                .uri(URI.create("http://localhost:" + rpcPort + "/agui/legacy/agent"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(
                     "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"run.start\",\"params\":{\"runId\":\"post-sse-run\",\"sessionId\":\"post-sse-session\"}}"))
@@ -172,7 +203,7 @@ class AgUiSampleRuntimeIntegrationTest {
 
             HttpClient http = HttpClient.newHttpClient();
             HttpRequest postSseRequest = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + rpcPort + "/agui/agent"))
+                .uri(URI.create("http://localhost:" + rpcPort + "/agui/legacy/agent"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(
                     "{\"runId\":\"methodless-run\",\"sessionId\":\"methodless-session\",\"messages\":[{\"role\":\"user\",\"content\":\"hello dojo\"}]}"))
@@ -213,7 +244,7 @@ class AgUiSampleRuntimeIntegrationTest {
 
             HttpClient http = HttpClient.newHttpClient();
             HttpRequest postSseRequest = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + rpcPort + "/agui/agent"))
+                .uri(URI.create("http://localhost:" + rpcPort + "/agui/legacy/agent"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(
                     "{\"threadId\":\"weather-thread\",\"messages\":[{\"role\":\"user\",\"content\":\"what is the weather in Berlin?\"}]}"))
@@ -262,7 +293,7 @@ class AgUiSampleRuntimeIntegrationTest {
 
             HttpClient http = HttpClient.newHttpClient();
             HttpRequest postSseRequest = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + rpcPort + "/agui/agent"))
+                .uri(URI.create("http://localhost:" + rpcPort + "/agui/legacy/agent"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(
                     "{\"threadId\":\"sports-thread\",\"messages\":[{\"role\":\"user\",\"content\":\"show score for San Francisco 49ers vs Dallas Cowboys\"}]}"))

@@ -14,19 +14,38 @@
 
 package io.dscope.camel.agui.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dscope.camel.agui.model.AgUiEvent;
 
 public class JacksonAgUiEventCodec implements AgUiEventCodec {
 
+    public static final String VALIDATION_ENABLED_PROPERTY = "agui.validation.enabled";
+
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+    private final boolean validationEnabled;
+
+    public JacksonAgUiEventCodec() {
+        this(validationEnabledProperty());
+    }
+
+    public JacksonAgUiEventCodec(boolean validationEnabled) {
+        this.validationEnabled = validationEnabled;
+    }
+
+    private static boolean validationEnabledProperty() {
+        return io.dscope.camel.agui.protocol.AgUiSchema.validationEnabled();
+    }
 
     @Override
     public String toJson(AgUiEvent event) {
+        JsonNode payload;
         try {
-            return mapper.writeValueAsString(event);
+            payload = event instanceof io.dscope.camel.agui.model.AgUiJsonEvent json ? json.getPayload() : mapper.valueToTree(event);
         } catch (Exception e) {
             throw new IllegalStateException("Unable to encode AG-UI event", e);
         }
+        io.dscope.camel.agui.protocol.AgUiSchema.validate("Event", payload, validationEnabled);
+        return payload.toString();
     }
 }

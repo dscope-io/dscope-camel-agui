@@ -36,6 +36,7 @@ public class PersistentAgUiStateStore implements AgUiStateStore {
 
     @Override
     public void put(String runId, JsonNode state) {
-        stateStore.writeSnapshot(FLOW_TYPE, runId, 1L, state, Map.of("updatedAt", Instant.now().toString()));
+        long version = stateStore.rehydrate(FLOW_TYPE, runId).envelope().version();
+        stateStore.writeSnapshot(FLOW_TYPE, runId, version, state, Map.of("updatedAt", Instant.now().toString()));
     }
 }

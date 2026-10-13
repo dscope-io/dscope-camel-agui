@@ -1,0 +1,1264 @@
+{
+  "TextMessageStartEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiTextMessageStart",
+    "value": {
+      "type": "TEXT_MESSAGE_START",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example",
+      "role": "developer",
+      "name": "example"
+    }
+  },
+  "TextMessageContentEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiTextMessageContent",
+    "value": {
+      "type": "TEXT_MESSAGE_CONTENT",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example",
+      "delta": "example"
+    }
+  },
+  "TextMessageEndEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiTextMessageEnd",
+    "value": {
+      "type": "TEXT_MESSAGE_END",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example"
+    }
+  },
+  "TextMessageChunkEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiTextMessageChunk",
+    "value": {
+      "type": "TEXT_MESSAGE_CHUNK",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example",
+      "role": "developer",
+      "delta": "example",
+      "name": "example"
+    }
+  },
+  "ToolCallStartEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiToolCallStart",
+    "value": {
+      "type": "TOOL_CALL_START",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "toolCallId": "example",
+      "toolCallName": "example",
+      "parentMessageId": "example"
+    }
+  },
+  "ToolCallArgsEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiToolCallArgs",
+    "value": {
+      "type": "TOOL_CALL_ARGS",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "toolCallId": "example",
+      "delta": "example"
+    }
+  },
+  "ToolCallEndEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiToolCallEnd",
+    "value": {
+      "type": "TOOL_CALL_END",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "toolCallId": "example"
+    }
+  },
+  "ToolCallChunkEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiToolCallChunk",
+    "value": {
+      "type": "TOOL_CALL_CHUNK",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "toolCallId": "example",
+      "toolCallName": "example",
+      "parentMessageId": "example",
+      "delta": "example"
+    }
+  },
+  "ToolCallResultEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiToolCallResult",
+    "value": {
+      "type": "TOOL_CALL_RESULT",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example",
+      "toolCallId": "example",
+      "content": "example",
+      "role": "tool"
+    }
+  },
+  "StateSnapshotEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiStateSnapshot",
+    "value": {
+      "type": "STATE_SNAPSHOT",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "snapshot": {
+        "application": "value"
+      }
+    }
+  },
+  "StateDeltaEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiStateDelta",
+    "value": {
+      "type": "STATE_DELTA",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "delta": [
+        {
+          "op": "add",
+          "path": "/example",
+          "value": {
+            "application": "value"
+          }
+        }
+      ]
+    }
+  },
+  "MessagesSnapshotEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiMessagesSnapshot",
+    "value": {
+      "type": "MESSAGES_SNAPSHOT",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "messages": [
+        {
+          "subagentRunId": "example",
+          "id": "example",
+          "role": "developer",
+          "name": "example",
+          "encryptedValue": "example",
+          "metadata": {},
+          "content": "example"
+        }
+      ]
+    }
+  },
+  "ActivitySnapshotEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiActivitySnapshot",
+    "value": {
+      "type": "ACTIVITY_SNAPSHOT",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example",
+      "activityType": "example",
+      "content": {},
+      "replace": true
+    }
+  },
+  "ActivityDeltaEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiActivityDelta",
+    "value": {
+      "type": "ACTIVITY_DELTA",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example",
+      "activityType": "example",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/example",
+          "value": {
+            "application": "value"
+          }
+        }
+      ]
+    }
+  },
+  "RawEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiRaw",
+    "value": {
+      "type": "RAW",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "event": {
+        "application": "value"
+      },
+      "source": "example"
+    }
+  },
+  "CustomEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiCustom",
+    "value": {
+      "type": "CUSTOM",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "name": "example",
+      "value": {
+        "application": "value"
+      }
+    }
+  },
+  "RunStartedEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiRunStarted",
+    "value": {
+      "type": "RUN_STARTED",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "threadId": "example",
+      "runId": "example",
+      "protocolVersion": "example",
+      "parentRunId": "example",
+      "input": {
+        "threadId": "example",
+        "runId": "example",
+        "protocolVersion": "example",
+        "parentRunId": "example",
+        "state": {
+          "application": "value"
+        },
+        "messages": [
+          {
+            "subagentRunId": "example",
+            "id": "example",
+            "role": "developer",
+            "name": "example",
+            "encryptedValue": "example",
+            "metadata": {},
+            "content": "example"
+          }
+        ],
+        "tools": [
+          {
+            "name": "example",
+            "description": "example",
+            "parameters": {
+              "application": "value"
+            },
+            "metadata": {}
+          }
+        ],
+        "context": [
+          {
+            "description": "example",
+            "value": "example"
+          }
+        ],
+        "forwardedProps": {
+          "application": "value"
+        },
+        "resume": [
+          {
+            "interruptId": "example",
+            "status": "resolved",
+            "payload": {
+              "application": "value"
+            },
+            "metadata": {}
+          }
+        ]
+      }
+    }
+  },
+  "RunFinishedEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiRunFinished",
+    "value": {
+      "type": "RUN_FINISHED",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "threadId": "example",
+      "runId": "example",
+      "result": {
+        "application": "value"
+      },
+      "outcome": {
+        "type": "success",
+        "pendingToolCallIds": [
+          "example"
+        ]
+      },
+      "usage": [
+        {
+          "provider": "example",
+          "model": "example",
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "totalTokens": 0,
+          "reasoningTokens": 0,
+          "cachedInputTokens": 0,
+          "cacheWriteInputTokens": 0
+        }
+      ]
+    }
+  },
+  "RunErrorEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiRunError",
+    "value": {
+      "type": "RUN_ERROR",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "message": "example",
+      "code": "example",
+      "usage": [
+        {
+          "provider": "example",
+          "model": "example",
+          "inputTokens": 0,
+          "outputTokens": 0,
+          "totalTokens": 0,
+          "reasoningTokens": 0,
+          "cachedInputTokens": 0,
+          "cacheWriteInputTokens": 0
+        }
+      ]
+    }
+  },
+  "StepStartedEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiStepStarted",
+    "value": {
+      "type": "STEP_STARTED",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "stepName": "example"
+    }
+  },
+  "StepFinishedEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiStepFinished",
+    "value": {
+      "type": "STEP_FINISHED",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "stepName": "example"
+    }
+  },
+  "ReasoningStartEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiReasoningStart",
+    "value": {
+      "type": "REASONING_START",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example"
+    }
+  },
+  "ReasoningMessageStartEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiReasoningMessageStart",
+    "value": {
+      "type": "REASONING_MESSAGE_START",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example",
+      "role": "reasoning"
+    }
+  },
+  "ReasoningMessageContentEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiReasoningMessageContent",
+    "value": {
+      "type": "REASONING_MESSAGE_CONTENT",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example",
+      "delta": "example"
+    }
+  },
+  "ReasoningMessageEndEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiReasoningMessageEnd",
+    "value": {
+      "type": "REASONING_MESSAGE_END",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example"
+    }
+  },
+  "ReasoningMessageChunkEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiReasoningMessageChunk",
+    "value": {
+      "type": "REASONING_MESSAGE_CHUNK",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example",
+      "delta": "example"
+    }
+  },
+  "ReasoningEndEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiReasoningEnd",
+    "value": {
+      "type": "REASONING_END",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "messageId": "example"
+    }
+  },
+  "ReasoningEncryptedValueEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiReasoningEncryptedValue",
+    "value": {
+      "type": "REASONING_ENCRYPTED_VALUE",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "subtype": "tool-call",
+      "entityId": "example",
+      "encryptedValue": "example"
+    }
+  },
+  "SubagentStartedEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiSubagentStarted",
+    "value": {
+      "type": "SUBAGENT_STARTED",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "name": "example",
+      "description": "example",
+      "parentSubagentRunId": "example",
+      "parentToolCallId": "example",
+      "parentMessageId": "example"
+    }
+  },
+  "SubagentFinishedEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiSubagentFinished",
+    "value": {
+      "type": "SUBAGENT_FINISHED",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "result": {
+        "application": "value"
+      },
+      "outcome": {
+        "type": "success"
+      }
+    }
+  },
+  "SubagentErrorEvent": {
+    "javaClass": "io.dscope.camel.agui.model.AgUiSubagentError",
+    "value": {
+      "type": "SUBAGENT_ERROR",
+      "timestamp": 0,
+      "rawEvent": {
+        "application": "value"
+      },
+      "metadata": {},
+      "subagentRunId": "example",
+      "message": "example",
+      "code": "example"
+    }
+  },
+  "RunFinishedOutcome": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.RunFinishedOutcome",
+    "value": {
+      "type": "success",
+      "pendingToolCallIds": [
+        "example"
+      ]
+    }
+  },
+  "RunFinishedSuccessOutcome": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.RunFinishedSuccessOutcome",
+    "value": {
+      "type": "success",
+      "pendingToolCallIds": [
+        "example"
+      ]
+    }
+  },
+  "RunFinishedInterruptOutcome": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.RunFinishedInterruptOutcome",
+    "value": {
+      "type": "interrupt",
+      "interrupts": [
+        {
+          "subagentRunId": "example",
+          "id": "example",
+          "reason": "example",
+          "message": "example",
+          "toolCallId": "example",
+          "responseSchema": {},
+          "expiresAt": "example",
+          "metadata": {}
+        }
+      ]
+    }
+  },
+  "RunFinishedCancelledOutcome": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.RunFinishedCancelledOutcome",
+    "value": {
+      "type": "cancelled"
+    }
+  },
+  "SubagentFinishedOutcome": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.SubagentFinishedOutcome",
+    "value": {
+      "type": "success"
+    }
+  },
+  "SubagentFinishedSuccessOutcome": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.SubagentFinishedSuccessOutcome",
+    "value": {
+      "type": "success"
+    }
+  },
+  "SubagentFinishedSuspendedOutcome": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.SubagentFinishedSuspendedOutcome",
+    "value": {
+      "type": "suspended",
+      "interruptIds": [
+        "example"
+      ]
+    }
+  },
+  "Interrupt": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.Interrupt",
+    "value": {
+      "subagentRunId": "example",
+      "id": "example",
+      "reason": "example",
+      "message": "example",
+      "toolCallId": "example",
+      "responseSchema": {},
+      "expiresAt": "example",
+      "metadata": {}
+    }
+  },
+  "ResumeEntry": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ResumeEntry",
+    "value": {
+      "interruptId": "example",
+      "status": "resolved",
+      "payload": {
+        "application": "value"
+      },
+      "metadata": {}
+    }
+  },
+  "TokenUsage": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.TokenUsage",
+    "value": {
+      "provider": "example",
+      "model": "example",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "reasoningTokens": 0,
+      "cachedInputTokens": 0,
+      "cacheWriteInputTokens": 0
+    }
+  },
+  "Message": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.Message",
+    "value": {
+      "subagentRunId": "example",
+      "id": "example",
+      "role": "developer",
+      "name": "example",
+      "encryptedValue": "example",
+      "metadata": {},
+      "content": "example"
+    }
+  },
+  "DeveloperMessage": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.DeveloperMessage",
+    "value": {
+      "subagentRunId": "example",
+      "id": "example",
+      "role": "developer",
+      "name": "example",
+      "encryptedValue": "example",
+      "metadata": {},
+      "content": "example"
+    }
+  },
+  "SystemMessage": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.SystemMessage",
+    "value": {
+      "subagentRunId": "example",
+      "id": "example",
+      "role": "system",
+      "name": "example",
+      "encryptedValue": "example",
+      "metadata": {},
+      "content": "example"
+    }
+  },
+  "AssistantMessage": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.AssistantMessage",
+    "value": {
+      "subagentRunId": "example",
+      "id": "example",
+      "role": "assistant",
+      "name": "example",
+      "encryptedValue": "example",
+      "metadata": {},
+      "content": "example",
+      "toolCalls": [
+        {
+          "id": "example",
+          "type": "function",
+          "function": {
+            "name": "example",
+            "arguments": "example"
+          },
+          "encryptedValue": "example",
+          "metadata": {}
+        }
+      ]
+    }
+  },
+  "UserMessage": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.UserMessage",
+    "value": {
+      "subagentRunId": "example",
+      "id": "example",
+      "role": "user",
+      "name": "example",
+      "encryptedValue": "example",
+      "metadata": {},
+      "content": "example"
+    }
+  },
+  "ToolMessage": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ToolMessage",
+    "value": {
+      "subagentRunId": "example",
+      "id": "example",
+      "role": "tool",
+      "content": "example",
+      "toolCallId": "example",
+      "error": "example",
+      "encryptedValue": "example",
+      "metadata": {}
+    }
+  },
+  "ActivityMessage": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ActivityMessage",
+    "value": {
+      "subagentRunId": "example",
+      "id": "example",
+      "role": "activity",
+      "activityType": "example",
+      "content": {},
+      "metadata": {}
+    }
+  },
+  "ReasoningMessage": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ReasoningMessage",
+    "value": {
+      "subagentRunId": "example",
+      "id": "example",
+      "role": "reasoning",
+      "content": "example",
+      "encryptedValue": "example",
+      "metadata": {}
+    }
+  },
+  "ToolCall": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ToolCall",
+    "value": {
+      "id": "example",
+      "type": "function",
+      "function": {
+        "name": "example",
+        "arguments": "example"
+      },
+      "encryptedValue": "example",
+      "metadata": {}
+    }
+  },
+  "FunctionCall": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.FunctionCall",
+    "value": {
+      "name": "example",
+      "arguments": "example"
+    }
+  },
+  "ContentPart": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ContentPart",
+    "value": {
+      "type": "text",
+      "id": "example",
+      "text": "example",
+      "metadata": {
+        "application": "value"
+      }
+    }
+  },
+  "TextPart": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.TextPart",
+    "value": {
+      "type": "text",
+      "id": "example",
+      "text": "example",
+      "metadata": {
+        "application": "value"
+      }
+    }
+  },
+  "ImagePart": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ImagePart",
+    "value": {
+      "type": "image",
+      "id": "example",
+      "source": {
+        "type": "data",
+        "value": "example",
+        "mimeType": "example"
+      },
+      "metadata": {
+        "application": "value"
+      }
+    }
+  },
+  "AudioPart": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.AudioPart",
+    "value": {
+      "type": "audio",
+      "id": "example",
+      "source": {
+        "type": "data",
+        "value": "example",
+        "mimeType": "example"
+      },
+      "metadata": {
+        "application": "value"
+      }
+    }
+  },
+  "VideoPart": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.VideoPart",
+    "value": {
+      "type": "video",
+      "id": "example",
+      "source": {
+        "type": "data",
+        "value": "example",
+        "mimeType": "example"
+      },
+      "metadata": {
+        "application": "value"
+      }
+    }
+  },
+  "DocumentPart": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.DocumentPart",
+    "value": {
+      "type": "document",
+      "id": "example",
+      "source": {
+        "type": "data",
+        "value": "example",
+        "mimeType": "example"
+      },
+      "metadata": {
+        "application": "value"
+      }
+    }
+  },
+  "PartSource": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.PartSource",
+    "value": {
+      "type": "data",
+      "value": "example",
+      "mimeType": "example"
+    }
+  },
+  "DataSource": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.DataSource",
+    "value": {
+      "type": "data",
+      "value": "example",
+      "mimeType": "example"
+    }
+  },
+  "UrlSource": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.UrlSource",
+    "value": {
+      "type": "url",
+      "value": "example",
+      "mimeType": "example"
+    }
+  },
+  "FileSource": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.FileSource",
+    "value": {
+      "type": "file",
+      "value": "example",
+      "provider": "example",
+      "mimeType": "example"
+    }
+  },
+  "Context": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.Context",
+    "value": {
+      "description": "example",
+      "value": "example"
+    }
+  },
+  "Tool": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.Tool",
+    "value": {
+      "name": "example",
+      "description": "example",
+      "parameters": {
+        "application": "value"
+      },
+      "metadata": {}
+    }
+  },
+  "RunAgentInput": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.RunAgentInput",
+    "value": {
+      "threadId": "example",
+      "runId": "example",
+      "protocolVersion": "example",
+      "parentRunId": "example",
+      "state": {
+        "application": "value"
+      },
+      "messages": [
+        {
+          "subagentRunId": "example",
+          "id": "example",
+          "role": "developer",
+          "name": "example",
+          "encryptedValue": "example",
+          "metadata": {},
+          "content": "example"
+        }
+      ],
+      "tools": [
+        {
+          "name": "example",
+          "description": "example",
+          "parameters": {
+            "application": "value"
+          },
+          "metadata": {}
+        }
+      ],
+      "context": [
+        {
+          "description": "example",
+          "value": "example"
+        }
+      ],
+      "forwardedProps": {
+        "application": "value"
+      },
+      "resume": [
+        {
+          "interruptId": "example",
+          "status": "resolved",
+          "payload": {
+            "application": "value"
+          },
+          "metadata": {}
+        }
+      ]
+    }
+  },
+  "SubagentInfo": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.SubagentInfo",
+    "value": {
+      "name": "example",
+      "description": "example"
+    }
+  },
+  "IdentityCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.IdentityCapabilities",
+    "value": {
+      "name": "example",
+      "type": "example",
+      "description": "example",
+      "version": "example",
+      "provider": "example",
+      "documentationUrl": "example",
+      "metadata": {}
+    }
+  },
+  "TransportCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.TransportCapabilities",
+    "value": {
+      "streaming": true,
+      "websocket": true,
+      "httpBinary": true,
+      "pushNotifications": true,
+      "resumable": true
+    }
+  },
+  "ToolsCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ToolsCapabilities",
+    "value": {
+      "supported": true,
+      "items": [
+        {
+          "name": "example",
+          "description": "example",
+          "parameters": {
+            "application": "value"
+          },
+          "metadata": {}
+        }
+      ],
+      "parallelCalls": true,
+      "clientProvided": true
+    }
+  },
+  "OutputCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.OutputCapabilities",
+    "value": {
+      "structuredOutput": true,
+      "supportedMimeTypes": [
+        "example"
+      ]
+    }
+  },
+  "StateCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.StateCapabilities",
+    "value": {
+      "snapshots": true,
+      "deltas": true,
+      "memory": true,
+      "persistentState": true
+    }
+  },
+  "MultiAgentCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.MultiAgentCapabilities",
+    "value": {
+      "supported": true,
+      "delegation": true,
+      "handoffs": true,
+      "subagents": [
+        {
+          "name": "example",
+          "description": "example"
+        }
+      ]
+    }
+  },
+  "ReasoningCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ReasoningCapabilities",
+    "value": {
+      "supported": true,
+      "streaming": true,
+      "encrypted": true
+    }
+  },
+  "MultimodalInputCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.MultimodalInputCapabilities",
+    "value": {
+      "image": true,
+      "audio": true,
+      "video": true,
+      "pdf": true,
+      "file": true
+    }
+  },
+  "MultimodalOutputCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.MultimodalOutputCapabilities",
+    "value": {
+      "image": true,
+      "audio": true
+    }
+  },
+  "MultimodalCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.MultimodalCapabilities",
+    "value": {
+      "input": {
+        "image": true,
+        "audio": true,
+        "video": true,
+        "pdf": true,
+        "file": true
+      },
+      "output": {
+        "image": true,
+        "audio": true
+      }
+    }
+  },
+  "ExecutionCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ExecutionCapabilities",
+    "value": {
+      "codeExecution": true,
+      "sandboxed": true,
+      "maxIterations": 0,
+      "maxExecutionTime": 0
+    }
+  },
+  "HumanInTheLoopCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.HumanInTheLoopCapabilities",
+    "value": {
+      "supported": true,
+      "approvals": true,
+      "interventions": true,
+      "feedback": true,
+      "interrupts": true,
+      "approveWithEdits": true
+    }
+  },
+  "AgentCapabilities": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.AgentCapabilities",
+    "value": {
+      "identity": {
+        "name": "example",
+        "type": "example",
+        "description": "example",
+        "version": "example",
+        "provider": "example",
+        "documentationUrl": "example",
+        "metadata": {}
+      },
+      "transport": {
+        "streaming": true,
+        "websocket": true,
+        "httpBinary": true,
+        "pushNotifications": true,
+        "resumable": true
+      },
+      "tools": {
+        "supported": true,
+        "items": [
+          {
+            "name": "example",
+            "description": "example",
+            "parameters": {
+              "application": "value"
+            },
+            "metadata": {}
+          }
+        ],
+        "parallelCalls": true,
+        "clientProvided": true
+      },
+      "output": {
+        "structuredOutput": true,
+        "supportedMimeTypes": [
+          "example"
+        ]
+      },
+      "state": {
+        "snapshots": true,
+        "deltas": true,
+        "memory": true,
+        "persistentState": true
+      },
+      "multiAgent": {
+        "supported": true,
+        "delegation": true,
+        "handoffs": true,
+        "subagents": [
+          {
+            "name": "example",
+            "description": "example"
+          }
+        ]
+      },
+      "reasoning": {
+        "supported": true,
+        "streaming": true,
+        "encrypted": true
+      },
+      "multimodal": {
+        "input": {
+          "image": true,
+          "audio": true,
+          "video": true,
+          "pdf": true,
+          "file": true
+        },
+        "output": {
+          "image": true,
+          "audio": true
+        }
+      },
+      "execution": {
+        "codeExecution": true,
+        "sandboxed": true,
+        "maxIterations": 0,
+        "maxExecutionTime": 0
+      },
+      "humanInTheLoop": {
+        "supported": true,
+        "approvals": true,
+        "interventions": true,
+        "feedback": true,
+        "interrupts": true,
+        "approveWithEdits": true
+      },
+      "custom": {}
+    }
+  },
+  "JsonPatchOperation": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.JsonPatchOperation",
+    "value": {
+      "op": "add",
+      "path": "/example",
+      "value": {
+        "application": "value"
+      }
+    }
+  },
+  "AddOperation": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.AddOperation",
+    "value": {
+      "op": "add",
+      "path": "/example",
+      "value": {
+        "application": "value"
+      }
+    }
+  },
+  "RemoveOperation": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.RemoveOperation",
+    "value": {
+      "op": "remove",
+      "path": "/example"
+    }
+  },
+  "ReplaceOperation": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.ReplaceOperation",
+    "value": {
+      "op": "replace",
+      "path": "/example",
+      "value": {
+        "application": "value"
+      }
+    }
+  },
+  "MoveOperation": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.MoveOperation",
+    "value": {
+      "op": "move",
+      "from": "/example",
+      "path": "/example"
+    }
+  },
+  "CopyOperation": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.CopyOperation",
+    "value": {
+      "op": "copy",
+      "from": "/example",
+      "path": "/example"
+    }
+  },
+  "TestOperation": {
+    "javaClass": "io.dscope.camel.agui.model.protocol.TestOperation",
+    "value": {
+      "op": "test",
+      "path": "/example",
+      "value": {
+        "application": "value"
+      }
+    }
+  }
+}

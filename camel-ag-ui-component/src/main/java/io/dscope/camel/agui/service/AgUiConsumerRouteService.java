@@ -15,17 +15,20 @@
 package io.dscope.camel.agui.service;
 
 import io.dscope.camel.agui.AgUiEndpoint;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 public class AgUiConsumerRouteService {
 
-    public void registerRoute(AgUiEndpoint endpoint, Processor processor) throws Exception {
+    public List<String> registerRoute(AgUiEndpoint endpoint, Processor processor) throws Exception {
+        List<String> routeIds = new ArrayList<>();
         String uri = endpoint.getConfiguration().getServerUrl() + normalize(endpoint.getConfiguration().getRpcPath());
         String routeId = "agui-consumer-" + Integer.toHexString(uri.hashCode());
 
         if (endpoint.getCamelContext().getRoute(routeId) != null) {
-            return;
+            return List.of(routeId);
         }
 
         endpoint.getCamelContext().addRoutes(new RouteBuilder() {
@@ -36,29 +39,42 @@ public class AgUiConsumerRouteService {
                     .process(processor);
             }
         });
+        routeIds.add(routeId);
 
         if (endpoint.getConfiguration().isWebsocketEnabled()) {
-            registerWebSocketRoute(endpoint, processor);
+            routeIds.add(registerWebSocketRoute(endpoint, processor));
+        }
+        return routeIds;
+    }
+
+    public void removeRoutes(AgUiEndpoint endpoint, List<String> routeIds) throws Exception {
+        for (String routeId : routeIds) {
+            if (endpoint.getCamelContext().getRoute(routeId) != null) {
+                endpoint.getCamelContext().getRouteController().stopRoute(routeId);
+                endpoint.getCamelContext().removeRoute(routeId);
+            }
         }
     }
 
-    private void registerWebSocketRoute(AgUiEndpoint endpoint, Processor processor) throws Exception {
+    private String registerWebSocketRoute(AgUiEndpoint endpoint, Processor processor) throws Exception {
         String wsUri = toWebSocketUri(endpoint.getConfiguration().getServerUrl(), endpoint.getConfiguration().getWsPath());
         String routeId = "agui-ws-consumer-" + Integer.toHexString(wsUri.hashCode());
         if (endpoint.getCamelContext().getRoute(routeId) != null) {
-            return;
+            return routeId;
         }
 
-        String sinkUri = appendSendOptions(wsUri, endpoint.getConfiguration().isSendToAll(), endpoint.getConfiguration().getAllowedOrigins());
+        String inboundUri = appendWebSocketOptions(wsUri, endpoint.getConfiguration().isSendToAll(), endpoint.getConfiguration().getAllowedOrigins());
+        String sinkUri = wsUri + (wsUri.contains("?") ? "&" : "?") + "sendToAll=" + endpoint.getConfiguration().isSendToAll();
         endpoint.getCamelContext().addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(wsUri)
+                from(inboundUri)
                     .routeId(routeId)
                     .process(processor)
                     .to(sinkUri);
             }
         });
+        return routeId;
     }
 
     private String normalize(String path) {
@@ -86,7 +102,7 @@ public class AgUiConsumerRouteService {
         return base + normalizedPath;
     }
 
-    private String appendSendOptions(String wsUri, boolean sendToAll, String allowedOrigins) {
+    private String appendWebSocketOptions(String wsUri, boolean sendToAll, String allowedOrigins) {
         String delimiter = wsUri.contains("?") ? "&" : "?";
         return wsUri + delimiter + "sendToAll=" + sendToAll + "&allowedOrigins=" + allowedOrigins;
     }

@@ -23,14 +23,39 @@ public class AgUiEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AgUiEndpoint target = (AgUiEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "agentpath":
+        case "agentPath": target.getConfiguration().setAgentPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowedorigins":
+        case "allowedOrigins": target.getConfiguration().setAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "eventsendpoint":
+        case "eventsEndpoint": target.getConfiguration().setEventsEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "method": target.getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "protocolversion":
+        case "protocolVersion": target.getConfiguration().setProtocolVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "remoteurl":
+        case "remoteUrl": target.getConfiguration().setRemoteUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "rpcpath":
+        case "rpcPath": target.getConfiguration().setRpcPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendtoall":
+        case "sendToAll": target.getConfiguration().setSendToAll(property(camelContext, boolean.class, value)); return true;
+        case "serverurl":
+        case "serverUrl": target.getConfiguration().setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "streampath":
+        case "streamPath": target.getConfiguration().setStreamPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "transportmode":
+        case "transportMode": target.getConfiguration().setTransportMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "websocketenabled":
+        case "websocketEnabled": target.getConfiguration().setWebsocketEnabled(property(camelContext, boolean.class, value)); return true;
+        case "wspath":
+        case "wsPath": target.getConfiguration().setWsPath(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -38,14 +63,39 @@ public class AgUiEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "agentpath":
+        case "agentPath": return java.lang.String.class;
+        case "allowedorigins":
+        case "allowedOrigins": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "eventsendpoint":
+        case "eventsEndpoint": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "method": return java.lang.String.class;
+        case "protocolversion":
+        case "protocolVersion": return java.lang.String.class;
+        case "remoteurl":
+        case "remoteUrl": return java.lang.String.class;
+        case "rpcpath":
+        case "rpcPath": return java.lang.String.class;
+        case "sendtoall":
+        case "sendToAll": return boolean.class;
+        case "serverurl":
+        case "serverUrl": return java.lang.String.class;
+        case "streampath":
+        case "streamPath": return java.lang.String.class;
+        case "transportmode":
+        case "transportMode": return java.lang.String.class;
+        case "websocketenabled":
+        case "websocketEnabled": return boolean.class;
+        case "wspath":
+        case "wsPath": return java.lang.String.class;
         default: return null;
         }
     }
@@ -54,14 +104,39 @@ public class AgUiEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AgUiEndpoint target = (AgUiEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "agentpath":
+        case "agentPath": return target.getConfiguration().getAgentPath();
+        case "allowedorigins":
+        case "allowedOrigins": return target.getConfiguration().getAllowedOrigins();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "eventsendpoint":
+        case "eventsEndpoint": return target.getConfiguration().getEventsEndpoint();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "method": return target.getConfiguration().getMethod();
+        case "protocolversion":
+        case "protocolVersion": return target.getConfiguration().getProtocolVersion();
+        case "remoteurl":
+        case "remoteUrl": return target.getConfiguration().getRemoteUrl();
+        case "rpcpath":
+        case "rpcPath": return target.getConfiguration().getRpcPath();
+        case "sendtoall":
+        case "sendToAll": return target.getConfiguration().isSendToAll();
+        case "serverurl":
+        case "serverUrl": return target.getConfiguration().getServerUrl();
+        case "streampath":
+        case "streamPath": return target.getConfiguration().getStreamPath();
+        case "transportmode":
+        case "transportMode": return target.getConfiguration().getTransportMode();
+        case "websocketenabled":
+        case "websocketEnabled": return target.getConfiguration().isWebsocketEnabled();
+        case "wspath":
+        case "wsPath": return target.getConfiguration().getWsPath();
         default: return null;
         }
     }

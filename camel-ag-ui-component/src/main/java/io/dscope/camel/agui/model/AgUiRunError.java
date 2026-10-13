@@ -15,9 +15,42 @@
 package io.dscope.camel.agui.model;
 
 public class AgUiRunError extends AgUiEvent {
+  public AgUiRunError() {
+    super("RUN_ERROR", null, null);
+  }
 
-    public AgUiRunError(String runId, String sessionId, String error) {
-        super(AgUiEventTypes.RUN_ERROR, runId, sessionId);
-        with("error", error);
-    }
+  private String message;
+
+  public AgUiRunError(String runId, String sessionId, String error) {
+    super(AgUiEventTypes.RUN_ERROR, runId, sessionId);
+    this.message = error;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  private String code;
+
+  public String getCode() {
+    return code;
+  }
+
+  public void setCode(String value) {
+    code = value;
+  }
+
+  private java.util.List<io.dscope.camel.agui.model.protocol.TokenUsage> usage;
+
+  public java.util.List<io.dscope.camel.agui.model.protocol.TokenUsage> getUsage() {
+    return usage;
+  }
+
+  public void setUsage(java.util.List<io.dscope.camel.agui.model.protocol.TokenUsage> value) {
+    usage = value;
+  }
 }

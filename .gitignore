@@ -20,9 +20,8 @@ maven-central.properties
 *.credentials.properties
 pom-central.xml
 scripts/load-maven-env.sh
-scripts/release-preflight.sh
 scripts/ossrh-auth-check.py
-scripts/deploy-central.sh
 docs/MAVEN_CENTRAL_DEPLOYMENT.md
 # maven-central-agent:end
-.gitignore
+
+**/node_modules/

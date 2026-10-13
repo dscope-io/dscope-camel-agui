@@ -34,6 +34,22 @@ public final class Main {
         AgUiComponentApplicationSupport support = new AgUiComponentApplicationSupport();
         return support.createMain("classpath:routes/ag-ui-platform.camel.yaml", main -> {
             main.bind("agUiUiPageProcessor", new AgUiUiPageProcessor());
+            main.bind("agUiStandardSampleProcessor", new AgUiStandardSampleProcessor());
+            main.bind("agUiCapabilitiesProcessor", (org.apache.camel.Processor) exchange -> {
+                // Advertise the configured deterministic sample, independently of model discovery.
+                var capabilities = io.dscope.camel.agui.protocol.AgUiSchema.MAPPER.readTree("""
+                    {"identity":{"name":"Camel AG-UI sample","version":"1.4.0"},
+                     "transport":{"streaming":true,"httpBinary":false,"resumable":false},
+                     "tools":{"supported":true,"clientProvided":false},
+                     "reasoning":{"supported":true,"streaming":true,"encrypted":false},
+                     "multiAgent":{"supported":true,"delegation":true,"subagents":[{"name":"documents"},{"name":"summary"}]},
+                     "humanInTheLoop":{"supported":true,"approvals":true,"interrupts":true},
+                     "output":{"supportedMimeTypes":["text/plain","application/pdf"]}}
+                    """);
+                io.dscope.camel.agui.protocol.AgUiSchema.validate("AgentCapabilities",capabilities,true);
+                exchange.getMessage().setHeader(org.apache.camel.Exchange.CONTENT_TYPE,"application/json");
+                exchange.getMessage().setBody(capabilities.toString());
+            });
             main.bind(AG_UI_AGENT_PRE_RUN_TEXT_PROCESSOR_BEAN, new AgUiSampleWidgetProcessor());
 
             if (!Boolean.parseBoolean(System.getProperty("agui.websocket.enabled", "false"))) {
@@ -42,7 +58,7 @@ public final class Main {
 
             String rpcPort = System.getProperty("agui.rpc.port", "8080");
             String wsPath = normalizePath(System.getProperty("agui.websocket.path", "/agui/ws"));
-            String wsUri = "undertow:ws://0.0.0.0:" + rpcPort + wsPath + "?sendToAll=false&allowedOrigins=*";
+            String wsUri = "undertow:ws://" + System.getProperty("agui.host", "127.0.0.1") + ":" + rpcPort + wsPath + "?sendToAll=false&allowedOrigins=*";
 
             main.configure().addRoutesBuilder(new RouteBuilder() {
                 @Override
@@ -50,6 +66,7 @@ public final class Main {
                     from(wsUri)
                         .routeId("agui-websocket-scaffold")
                         .doTry()
+                            .process("agUiAccessProcessor")
                             .process("agUiJsonRpcEnvelopeProcessor")
                             .process("agUiMethodDispatchProcessor")
                             .to(wsUri)

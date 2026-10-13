@@ -15,19 +15,22 @@
 package io.dscope.camel.agui.model;
 
 public class AgUiStepFinished extends AgUiEvent {
+  public AgUiStepFinished() {
+    super("STEP_FINISHED", null, null);
+  }
 
-    private String stepName;
+  private String stepName;
 
-    public AgUiStepFinished(String runId, String sessionId, String stepName) {
-        super(AgUiEventTypes.STEP_FINISHED, runId, sessionId);
-        this.stepName = stepName;
-    }
+  public AgUiStepFinished(String runId, String sessionId, String stepName) {
+    super(AgUiEventTypes.STEP_FINISHED, runId, sessionId);
+    this.stepName = stepName;
+  }
 
-    public String getStepName() {
-        return stepName;
-    }
+  public String getStepName() {
+    return stepName;
+  }
 
-    public void setStepName(String stepName) {
-        this.stepName = stepName;
-    }
+  public void setStepName(String stepName) {
+    this.stepName = stepName;
+  }
 }

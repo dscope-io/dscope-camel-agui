@@ -33,15 +33,18 @@ public class AgUiErrorProcessor implements Processor {
             throwable = exchange.getException();
         }
 
-        int code = throwable instanceof AgUiMethodNotFoundException ? -32601 : -32602;
-        String message = throwable == null ? "Unknown error" : throwable.getMessage();
+        int code = throwable instanceof AgUiAuthorizationException ? -32001
+            : throwable instanceof AgUiMethodNotFoundException ? -32601
+            : throwable instanceof AgUiJsonRpcValidationException ? -32602 : -32603;
+        String message = code == -32001 ? "Access denied" : code == -32601 ? "Method not found"
+            : code == -32602 ? "Invalid request parameters" : "Internal server error";
 
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("jsonrpc", AgUiProtocolDefaults.JSONRPC_VERSION);
         payload.put("id", exchange.getProperty(AgUiExchangeProperties.REQUEST_ID));
         payload.put("error", Map.of("code", code, "message", message));
 
-        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, code == -32001 ? 403 : code == -32603 ? 500 : 400);
         exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
         exchange.getMessage().setBody(mapper.writeValueAsString(payload));
         exchange.setException(null);

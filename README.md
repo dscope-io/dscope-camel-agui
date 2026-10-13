@@ -1,6 +1,6 @@
 # Camel AG-UI Component
 
-[![AG-UI YAML Service CI](https://github.com/dscope-io/camel-ag-ui/actions/workflows/ag-ui-yaml-service-ci.yml/badge.svg)](https://github.com/dscope-io/camel-ag-ui/actions/workflows/ag-ui-yaml-service-ci.yml)
+[![AG-UI YAML Service CI](https://github.com/dscope-io/dscope-camel-agui/actions/workflows/ag-ui-yaml-service-ci.yml/badge.svg)](https://github.com/dscope-io/dscope-camel-agui/actions/workflows/ag-ui-yaml-service-ci.yml)
 
 Apache Camel component and sample runtime for AG-UI protocol workflows.
 
@@ -9,7 +9,7 @@ This repository provides:
 - A reusable Camel component (`agui:`) for producer/consumer integration.
 - A protocol service runtime with JSON-RPC 2.0 request handling, SSE event streaming, and optional WebSocket scaffolding.
 - Transport compatibility modes for both split endpoints (`/agui/rpc` + `/agui/stream/{runId}`) and single-endpoint POST+SSE (`/agui/agent`).
-- Core AG-UI event model covering lifecycle, text, tool, state, and interrupt/resume events.
+- All 31 AG-UI 1.0 event models, typed run inputs and incremental HTTP/SSE processing with default-on schema validation.
 - In-memory session/state services with pluggable SPI interfaces.
 - Optional persistence-backed session/state services via shared `camel-persistence` backends.
 - Extension hooks for soft integration with MCP/A2A ecosystems.
@@ -42,36 +42,34 @@ AGUI Dojo integration guide for this sample:
 Dependency coordinates for consumers:
 
 - Group: `io.dscope.camel`
-- Artifact: `camel-ag-ui`
-- Version: match your release (for example `1.3.0`)
+- Artifact: `camel-ag-ui-component`
+- Version: match your release (for example `1.4.0`)
 
-Current Central publish flow releases the root POM artifact:
-
-- `io.dscope.camel:camel-ag-ui:1.3.0`
+The release build includes the component JAR and its parent POM. Publication requires camel-persistence 1.4.0 to be available in Central.
 
 Maven:
 
 ```xml
 <dependency>
    <groupId>io.dscope.camel</groupId>
-   <artifactId>camel-ag-ui</artifactId>
-   <version>1.3.0</version>
+   <artifactId>camel-ag-ui-component</artifactId>
+   <version>1.4.0</version>
 </dependency>
 ```
 
 Gradle (Groovy):
 
 ```groovy
-implementation 'io.dscope.camel:camel-ag-ui:1.3.0'
+implementation 'io.dscope.camel:camel-ag-ui-component:1.4.0'
 ```
 
 Gradle (Kotlin):
 
 ```kotlin
-implementation("io.dscope.camel:camel-ag-ui:1.3.0")
+implementation("io.dscope.camel:camel-ag-ui-component:1.4.0")
 ```
 
-If you publish module artifacts (installer `--include-modules` mode), module coordinates such as `io.dscope.camel:camel-ag-ui-component:<version>` can be used.
+See [AG-UI 1.0 migration and release verification](docs/agui-1.0-migration.md) for HTTP/SSE, validation, interrupts, persistence and interoperability testing.
 
 ### Prerequisites
 
@@ -94,9 +92,21 @@ mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceJdbcTest test
 mvn -pl camel-ag-ui-component -Dtest=PersistentAgUiPersistenceRedisTest -Dcamel.persistence.test.redis.uri=redis://localhost:6379 test
 ```
 
+### AG-UI event validation
+
+Outgoing events are validated against the bundled official AG-UI 1.0 JSON Schema by default. No network access is needed for validation. Invalid events fail before being appended to session history; validation checks JSON structure, not lifecycle ordering.
+
+Disable validation with the JVM system property `-Dagui.validation.enabled=false`. The property defaults to `true`, is read when the default event codec is created, and applies to both in-memory and persistent registries. Invalid boolean values fail configuration. Embedded users can explicitly construct `new JacksonAgUiEventCodec(false)`.
+
+The wire format always uses integer millisecond timestamps, omits internal `sessionId`, and includes `runId`/`threadId` only on run-start/run-finish events. Disabling validation does not revert these corrections. Constructors that omit required message/tool IDs must have those IDs set before emission.
+
+Legacy interrupt/resume notifications are now standard `CUSTOM` events with `name` equal to `INTERRUPT_REQUESTED` or `RESUME_ACCEPTED` and a `value` payload. Clients subscribing to the old event types must handle `CUSTOM` instead. These remain application notifications; the AG-UI 1.0 interrupt/new-run resume lifecycle is not implemented by them. Full 1.0 feature coverage is still incomplete.
+
 ### Run Sample Runtime
 
 Configuration defaults are loaded from `samples/ag-ui-yaml-service/src/main/resources/application.yaml`; any JVM `-D...` system properties override those values at runtime.
+
+The sample binds to loopback by default. Set `-Dagui.access.token=<strong-random-token>` before exposing it outside the host; clients must send the matching `Authorization: Bearer` header.
 
 Example override: `mvn -DskipTests compile exec:java -Dagui.health.port=9080 -Dagui.rpc.port=9080`
 

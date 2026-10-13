@@ -23,6 +23,12 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,15 +40,21 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install pinned official AG-UI client
+        run: npm ci --prefix tests/agui-client --ignore-scripts
+
       - name: Run default test suite (no UI E2E)
-        run: mvn -B -ntp -f samples/ag-ui-yaml-service/pom.xml test
+        run: mvn -B -ntp -Dagui.interop=true test
 
       - name: Upload Surefire reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: surefire-unit-tests
-          path: samples/ag-ui-yaml-service/target/surefire-reports/**
+          path: "**/target/surefire-reports/**"
 
   ui-e2e-tests:
     name: UI E2E Tests
@@ -58,14 +70,20 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Chromium and OS libraries
+        run: npx --yes playwright@1.62.0 install --with-deps chromium
+
       - name: Run Playwright UI E2E suite
         env:
           CI: "true"
-        run: mvn -B -ntp -f samples/ag-ui-yaml-service/pom.xml -Pui-e2e test
+        run: mvn -B -ntp -pl samples/ag-ui-yaml-service -am -Pui-e2e test
 
       - name: Upload Surefire reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: surefire-ui-e2e
-          path: samples/ag-ui-yaml-service/target/surefire-reports/**
+          path: "**/target/surefire-reports/**"

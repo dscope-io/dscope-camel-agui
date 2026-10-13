@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import { HttpAgent } from '@ag-ui/client';
+import { PROTOCOL_VERSION } from '@ag-ui/core';
+
+assert.equal(PROTOCOL_VERSION, '1.0');
+const agent = new HttpAgent({ url: process.argv[2], threadId: 'official-client', messages: [], state: {} });
+const events = [];
+const subscriber = { onEvent: ({ event }) => { events.push(event.type); } };
+await agent.runAgent({ runId: 'official-interrupt' }, subscriber);
+assert.equal(agent.pendingInterrupts.length, 1);
+assert.equal(agent.pendingInterrupts[0].id, 'approval');
+await agent.runAgent({ runId: 'official-resume', resume: [{ interruptId: 'approval', status: 'resolved', payload: true }] }, subscriber);
+assert.equal(agent.pendingInterrupts.length, 0);
+assert.equal(agent.messages.find(m => m.id === 'answer').content, 'Hello official client');
+assert.equal(agent.state.counter, 1);
+assert.equal(agent.messages.find(m => m.id === 'activity').content.n, 2);
+assert.equal(agent.messages.find(m => m.id === 'reasoning').role, 'reasoning');
+assert.equal(agent.messages.find(m => m.id === 'a').subagentRunId, 'a');
+assert.equal(agent.messages.find(m => m.id === 'doc-result').content[1].type, 'document');
+assert.ok(events.includes('RUN_STARTED'));
+assert.ok(events.includes('RUN_FINISHED'));
+let cancelled;
+await agent.runAgent({ runId: 'official-cancel' }, { onRunFinishedEvent: ({ outcome }) => { cancelled = outcome; } });
+assert.equal(cancelled, 'cancelled');
+console.log('Official AG-UI 1.0 client: interrupt/resume, text, state, reasoning, activity, subagents, multimodal tools and cancellation passed');

@@ -21,16 +21,31 @@ public class AgUiEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
+    private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(18);
         props.add("agentId");
+        props.add("agentPath");
+        props.add("allowedOrigins");
         props.add("bridgeErrorHandler");
+        props.add("eventsEndpoint");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("lazyStartProducer");
+        props.add("method");
+        props.add("protocolVersion");
+        props.add("remoteUrl");
+        props.add("rpcPath");
+        props.add("sendToAll");
+        props.add("serverUrl");
+        props.add("streamPath");
+        props.add("transportMode");
+        props.add("websocketEnabled");
+        props.add("wsPath");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
+        ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
@@ -59,6 +74,11 @@ public class AgUiEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> secretPropertyNames() {
         return SECRET_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> endpointIdentityPropertyNames() {
+        return ENDPOINT_IDENTITY_PROPERTY_NAMES;
     }
 
     @Override

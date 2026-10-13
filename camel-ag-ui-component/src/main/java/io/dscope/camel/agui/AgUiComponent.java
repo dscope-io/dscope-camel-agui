@@ -21,12 +21,35 @@ import org.apache.camel.support.DefaultComponent;
 
 @Component("agui")
 public class AgUiComponent extends DefaultComponent {
+  final io.dscope.camel.agui.service.AgUiStateStore standardCheckpoints =
+      new io.dscope.camel.agui.service.InMemoryAgUiStateStore();
+  final io.dscope.camel.agui.service.AgUiSessionRegistry standardSessions =
+      new io.dscope.camel.agui.service.InMemoryAgUiSessionRegistry(
+          new io.dscope.camel.agui.service.JacksonAgUiEventCodec());
+  final java.util.concurrent.ConcurrentMap<String, java.util.concurrent.locks.ReentrantLock>
+      standardThreadLocks = new java.util.concurrent.ConcurrentHashMap<>();
 
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        AgUiConfiguration configuration = new AgUiConfiguration();
-        configuration.setAgentId(remaining);
-        setProperties(configuration, parameters);
-        return new AgUiEndpoint(uri, this, configuration, remaining);
-    }
+  private java.util.List<java.util.function.UnaryOperator<com.fasterxml.jackson.databind.JsonNode>>
+      eventMiddleware = java.util.List.of();
+
+  public java.util.List<java.util.function.UnaryOperator<com.fasterxml.jackson.databind.JsonNode>>
+      getEventMiddleware() {
+    return eventMiddleware;
+  }
+
+  /** Ordered event middleware applied after compatibility translation and before validation. */
+  public void setEventMiddleware(
+      java.util.List<java.util.function.UnaryOperator<com.fasterxml.jackson.databind.JsonNode>>
+          middleware) {
+    eventMiddleware = java.util.List.copyOf(middleware);
+  }
+
+  @Override
+  protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+      throws Exception {
+    AgUiConfiguration configuration = new AgUiConfiguration();
+    configuration.setAgentId(remaining);
+    setProperties(configuration, parameters);
+    return new AgUiEndpoint(uri, this, configuration, remaining);
+  }
 }

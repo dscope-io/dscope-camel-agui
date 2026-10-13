@@ -18,129 +18,198 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
+@org.apache.camel.spi.UriParams
 public class AgUiConfiguration {
 
-    @UriPath(description = "Agent identifier for this endpoint")
-    @Metadata(required = true)
-    private String agentId;
+  @UriPath(description = "Agent identifier for this endpoint")
+  @Metadata(required = true)
+  private String agentId;
 
-    @UriParam(label = "consumer", defaultValue = "undertow:http://0.0.0.0:8080")
-    private String serverUrl = "undertow:http://0.0.0.0:8080";
+  @UriParam(
+      label = "consumer",
+      defaultValue = "undertow:http://0.0.0.0:8080",
+      description = "Undertow listener URL for incoming agent requests")
+  private String serverUrl = "undertow:http://0.0.0.0:8080";
 
-    @UriParam(label = "producer", defaultValue = "http://localhost:8080")
-    private String remoteUrl = "http://localhost:8080";
+  @UriParam(
+      label = "producer",
+      defaultValue = "http://localhost:8080",
+      description = "Base URL of the remote AG-UI server")
+  private String remoteUrl = "http://localhost:8080";
 
-    @UriParam(label = "consumer,producer", defaultValue = "/agui/rpc")
-    private String rpcPath = "/agui/rpc";
+  @UriParam(
+      label = "consumer,producer",
+      defaultValue = "/agui/rpc",
+      description = "Legacy JSON-RPC request path")
+  private String rpcPath = "/agui/rpc";
 
-    @UriParam(label = "consumer,producer", defaultValue = "/agui/stream")
-    private String streamPath = "/agui/stream";
+  @UriParam(
+      label = "consumer,producer",
+      defaultValue = "/agui/stream",
+      description = "Legacy event replay path")
+  private String streamPath = "/agui/stream";
 
-    @UriParam(label = "consumer", defaultValue = "*")
-    private String allowedOrigins = "*";
+  @UriParam(
+      label = "consumer",
+      defaultValue = "*",
+      description = "Allowed origins for the legacy WebSocket binding")
+  private String allowedOrigins = "*";
 
-    @UriParam(label = "consumer", defaultValue = "false")
-    private boolean sendToAll = false;
+  @UriParam(
+      label = "consumer",
+      defaultValue = "false",
+      description = "Broadcast legacy WebSocket responses")
+  private boolean sendToAll = false;
 
-    @UriParam(label = "consumer", defaultValue = "false",
-        description = "Enable WebSocket consumer scaffolding route in addition to HTTP RPC route.")
-    private boolean websocketEnabled = false;
+  @UriParam(
+      label = "consumer",
+      defaultValue = "false",
+      description = "Enable WebSocket consumer scaffolding route in addition to HTTP RPC route.")
+  private boolean websocketEnabled = false;
 
-    @UriParam(label = "consumer", defaultValue = "/agui/ws",
-        description = "WebSocket path used when websocketEnabled=true.")
-    private String wsPath = "/agui/ws";
+  @UriParam(
+      label = "consumer",
+      defaultValue = "/agui/ws",
+      description = "WebSocket path used when websocketEnabled=true.")
+  private String wsPath = "/agui/ws";
 
-    @UriParam(label = "producer", defaultValue = "run.start")
-    private String method = "run.start";
+  @UriParam(label = "producer", defaultValue = "run.start", description = "Legacy JSON-RPC method")
+  private String method = "run.start";
 
-    @UriParam(label = "consumer,producer", defaultValue = "agui/2026-01-01")
-    private String protocolVersion = "agui/2026-01-01";
+  @UriParam(
+      label = "consumer,producer",
+      defaultValue = "agui/2026-01-01",
+      description = "Legacy configured protocol identifier; standard HTTP/SSE declares 1.0")
+  private String protocolVersion = "agui/2026-01-01";
 
-    public String getAgentId() {
-        return agentId;
-    }
+  @UriParam(
+      label = "consumer,producer",
+      defaultValue = "jsonRpc",
+      description = "Choose legacy jsonRpc or standard httpSse transport")
+  private String transportMode = "jsonRpc";
 
-    public void setAgentId(String agentId) {
-        this.agentId = agentId;
-    }
+  @UriParam(
+      label = "consumer,producer",
+      defaultValue = "/agui/agent",
+      description = "Standard HTTP/SSE agent endpoint path")
+  private String agentPath = "/agui/agent";
 
-    public String getServerUrl() {
-        return serverUrl;
-    }
+  @UriParam(
+      label = "producer",
+      description = "Camel endpoint receiving each normalized HTTP/SSE event in order")
+  private String eventsEndpoint;
 
-    public void setServerUrl(String serverUrl) {
-        this.serverUrl = serverUrl;
-    }
+  public String getTransportMode() {
+    return transportMode;
+  }
 
-    public String getRemoteUrl() {
-        return remoteUrl;
-    }
+  public void setTransportMode(String value) {
+    if (!"jsonRpc".equals(value) && !"httpSse".equals(value))
+      throw new IllegalArgumentException("transportMode must be jsonRpc or httpSse");
+    transportMode = value;
+  }
 
-    public void setRemoteUrl(String remoteUrl) {
-        this.remoteUrl = remoteUrl;
-    }
+  public String getAgentPath() {
+    return agentPath;
+  }
 
-    public String getRpcPath() {
-        return rpcPath;
-    }
+  public void setAgentPath(String value) {
+    agentPath = value;
+  }
 
-    public void setRpcPath(String rpcPath) {
-        this.rpcPath = rpcPath;
-    }
+  public String getEventsEndpoint() {
+    return eventsEndpoint;
+  }
 
-    public String getStreamPath() {
-        return streamPath;
-    }
+  public void setEventsEndpoint(String value) {
+    eventsEndpoint = value;
+  }
 
-    public void setStreamPath(String streamPath) {
-        this.streamPath = streamPath;
-    }
+  public String getAgentId() {
+    return agentId;
+  }
 
-    public String getAllowedOrigins() {
-        return allowedOrigins;
-    }
+  public void setAgentId(String agentId) {
+    this.agentId = agentId;
+  }
 
-    public void setAllowedOrigins(String allowedOrigins) {
-        this.allowedOrigins = allowedOrigins;
-    }
+  public String getServerUrl() {
+    return serverUrl;
+  }
 
-    public boolean isSendToAll() {
-        return sendToAll;
-    }
+  public void setServerUrl(String serverUrl) {
+    this.serverUrl = serverUrl;
+  }
 
-    public void setSendToAll(boolean sendToAll) {
-        this.sendToAll = sendToAll;
-    }
+  public String getRemoteUrl() {
+    return remoteUrl;
+  }
 
-    public boolean isWebsocketEnabled() {
-        return websocketEnabled;
-    }
+  public void setRemoteUrl(String remoteUrl) {
+    this.remoteUrl = remoteUrl;
+  }
 
-    public void setWebsocketEnabled(boolean websocketEnabled) {
-        this.websocketEnabled = websocketEnabled;
-    }
+  public String getRpcPath() {
+    return rpcPath;
+  }
 
-    public String getWsPath() {
-        return wsPath;
-    }
+  public void setRpcPath(String rpcPath) {
+    this.rpcPath = rpcPath;
+  }
 
-    public void setWsPath(String wsPath) {
-        this.wsPath = wsPath;
-    }
+  public String getStreamPath() {
+    return streamPath;
+  }
 
-    public String getMethod() {
-        return method;
-    }
+  public void setStreamPath(String streamPath) {
+    this.streamPath = streamPath;
+  }
 
-    public void setMethod(String method) {
-        this.method = method;
-    }
+  public String getAllowedOrigins() {
+    return allowedOrigins;
+  }
 
-    public String getProtocolVersion() {
-        return protocolVersion;
-    }
+  public void setAllowedOrigins(String allowedOrigins) {
+    this.allowedOrigins = allowedOrigins;
+  }
 
-    public void setProtocolVersion(String protocolVersion) {
-        this.protocolVersion = protocolVersion;
-    }
+  public boolean isSendToAll() {
+    return sendToAll;
+  }
+
+  public void setSendToAll(boolean sendToAll) {
+    this.sendToAll = sendToAll;
+  }
+
+  public boolean isWebsocketEnabled() {
+    return websocketEnabled;
+  }
+
+  public void setWebsocketEnabled(boolean websocketEnabled) {
+    this.websocketEnabled = websocketEnabled;
+  }
+
+  public String getWsPath() {
+    return wsPath;
+  }
+
+  public void setWsPath(String wsPath) {
+    this.wsPath = wsPath;
+  }
+
+  public String getMethod() {
+    return method;
+  }
+
+  public void setMethod(String method) {
+    this.method = method;
+  }
+
+  public String getProtocolVersion() {
+    return protocolVersion;
+  }
+
+  public void setProtocolVersion(String protocolVersion) {
+    this.protocolVersion = protocolVersion;
+  }
 }

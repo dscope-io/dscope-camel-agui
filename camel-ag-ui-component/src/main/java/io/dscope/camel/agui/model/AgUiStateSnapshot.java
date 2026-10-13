@@ -15,9 +15,22 @@
 package io.dscope.camel.agui.model;
 
 public class AgUiStateSnapshot extends AgUiEvent {
+  public AgUiStateSnapshot() {
+    super("STATE_SNAPSHOT", null, null);
+  }
 
-    public AgUiStateSnapshot(String runId, String sessionId, Object state) {
-        super(AgUiEventTypes.STATE_SNAPSHOT, runId, sessionId);
-        with("state", state);
-    }
+  private Object snapshot;
+
+  public AgUiStateSnapshot(String runId, String sessionId, Object state) {
+    super(AgUiEventTypes.STATE_SNAPSHOT, runId, sessionId);
+    this.snapshot = state;
+  }
+
+  public Object getSnapshot() {
+    return snapshot;
+  }
+
+  public void setSnapshot(Object snapshot) {
+    this.snapshot = snapshot;
+  }
 }

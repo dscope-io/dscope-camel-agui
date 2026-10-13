@@ -144,6 +144,7 @@ class AgUiCopilotKitUiPlaywrightTest {
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true))) {
             return browser.isConnected();
         } catch (RuntimeException ex) {
+            if (Boolean.parseBoolean(System.getenv("CI"))) throw ex;
             return false;
         }
     }

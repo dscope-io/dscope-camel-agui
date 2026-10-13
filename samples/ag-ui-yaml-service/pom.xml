@@ -6,14 +6,14 @@
   <parent>
     <groupId>io.dscope.camel</groupId>
     <artifactId>camel-ag-ui-samples</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
   </parent>
 
   <artifactId>ag-ui-yaml-service</artifactId>
   <name>Camel AG-UI YAML Sample Service</name>
 
   <properties>
-    <playwright.version>1.54.0</playwright.version>
+    <playwright.version>1.62.0</playwright.version>
   </properties>
 
   <dependencies>
@@ -50,7 +50,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>2.0.16</version>
+      <version>${slf4j.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -72,7 +72,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>${maven.compiler.plugin.version}</version>
         <configuration>
           <release>${maven.compiler.release}</release>
         </configuration>
@@ -80,7 +80,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>${exec.maven.plugin.version}</version>
         <configuration>
           <mainClass>io.dscope.camel.agui.samples.Main</mainClass>
         </configuration>
@@ -88,7 +88,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>${maven.surefire.plugin.version}</version>
         <configuration>
           <useModulePath>false</useModulePath>
         </configuration>
@@ -107,7 +107,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.2.5</version>
+            <version>${maven.surefire.plugin.version}</version>
             <configuration>
               <useModulePath>false</useModulePath>
               <excludes>
@@ -125,7 +125,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.2.5</version>
+            <version>${maven.surefire.plugin.version}</version>
             <configuration>
               <useModulePath>false</useModulePath>
               <includes>

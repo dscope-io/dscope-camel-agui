@@ -15,9 +15,22 @@
 package io.dscope.camel.agui.model;
 
 public class AgUiStateDelta extends AgUiEvent {
+  public AgUiStateDelta() {
+    super("STATE_DELTA", null, null);
+  }
 
-    public AgUiStateDelta(String runId, String sessionId, Object patch) {
-        super(AgUiEventTypes.STATE_DELTA, runId, sessionId);
-        with("patch", patch);
-    }
+  private Object delta;
+
+  public AgUiStateDelta(String runId, String sessionId, Object patch) {
+    super(AgUiEventTypes.STATE_DELTA, runId, sessionId);
+    this.delta = patch;
+  }
+
+  public Object getDelta() {
+    return delta;
+  }
+
+  public void setDelta(Object delta) {
+    this.delta = delta;
+  }
 }

@@ -147,6 +147,7 @@
         const lines = body.split(/\r?\n/);
         let currentEvent = '';
         let currentData = '';
+        let terminalType;
 
         for (const line of lines) {
           if (line.startsWith('event:')) {
@@ -155,22 +156,24 @@
             currentData += line.slice('data:'.length).trim();
           } else if (!line.trim()) {
             if (currentEvent || currentData) {
-              appendEventLine(`${currentEvent || 'message'} ${currentData}`);
-              if (currentEvent === 'TEXT_MESSAGE_CONTENT') {
-                appendLog(assistantLog, currentData);
-              }
+              const decoded = JSON.parse(currentData);
+              const type = decoded.type || currentEvent;
+              appendEventLine(`${type || 'message'} ${currentData}`);
+              if (type === 'TEXT_MESSAGE_CONTENT') appendLog(assistantLog, decoded.delta);
+              if (type === 'RUN_FINISHED' || type === 'RUN_ERROR') terminalType = type;
             }
             currentEvent = '';
             currentData = '';
           }
         }
+        return terminalType;
       }
 
       function attachSse(runId) {
         if (sse) {
           sse.close();
         }
-        sse = new EventSource(`/agui/stream/${encodeURIComponent(runId)}?afterSequence=0&limit=200`);
+        sse = new EventSource(`/agui/stream/${encodeURIComponent(runId)}?limit=200`);
         appendLog(transportLog, `SSE connected for runId=${runId}`);
 
         sse.onmessage = (event) => appendEventLine(`message ${event.data}`);
@@ -196,27 +199,39 @@
 
         const payload = {
           runId,
-          sessionId,
+          protocolVersion: '1.0',
           threadId,
-          messages: [{ role: 'user', content: prompt }]
+          messages: [{ id: `user-${Date.now()}`, role: 'user', content: prompt }]
         };
 
         appendLog(transportLog, `POST /agui/agent payload=${JSON.stringify(payload)}`);
         const response = await fetch('/agui/agent', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
           body: JSON.stringify(payload)
         });
-        const body = await response.text();
         appendLog(transportLog, `POST /agui/agent -> HTTP ${response.status}`);
         if (!response.ok) {
-          appendLog(assistantLog, `POST failed: ${body}`);
+          appendLog(assistantLog, `POST failed: ${await response.text()}`);
           setStatus('post-failed');
           return;
         }
-
-        parseSseBody(body);
-        setStatus('post-complete');
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let pending = '';
+        let terminalType;
+        while (true) {
+          const { value, done } = await reader.read();
+          pending += decoder.decode(value, { stream: !done });
+          let boundary;
+          while ((boundary = pending.indexOf('\n\n')) >= 0) {
+            terminalType = parseSseBody(pending.slice(0, boundary + 2)) || terminalType;
+            pending = pending.slice(boundary + 2);
+          }
+          if (done) break;
+        }
+        if (pending.trim() || !terminalType) throw new Error('Truncated AG-UI stream');
+        setStatus(terminalType === 'RUN_ERROR' ? 'post-failed' : 'post-complete');
       }
 
       function createWebSocketUrl() {

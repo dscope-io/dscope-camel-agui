@@ -14,9 +14,56 @@
 
 package io.dscope.camel.agui.model;
 
-public class AgUiRunStarted extends AgUiEvent {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    public AgUiRunStarted(String runId, String sessionId) {
-        super(AgUiEventTypes.RUN_STARTED, runId, sessionId);
-    }
+public class AgUiRunStarted extends AgUiEvent {
+  public AgUiRunStarted() {
+    super("RUN_STARTED", null, null);
+  }
+
+  public AgUiRunStarted(String runId, String sessionId) {
+    super(AgUiEventTypes.RUN_STARTED, runId, sessionId);
+  }
+
+  @Override
+  @JsonIgnore(false)
+  public String getRunId() {
+    return super.getRunId();
+  }
+
+  @Override
+  @JsonIgnore(false)
+  public String getThreadId() {
+    return super.getThreadId();
+  }
+
+  private String protocolVersion;
+
+  public String getProtocolVersion() {
+    return protocolVersion;
+  }
+
+  public void setProtocolVersion(String value) {
+    protocolVersion = value;
+  }
+
+  private String parentRunId;
+
+  public String getParentRunId() {
+    return parentRunId;
+  }
+
+  public void setParentRunId(String value) {
+    parentRunId = value;
+  }
+
+  private io.dscope.camel.agui.model.protocol.RunAgentInput input;
+
+  public io.dscope.camel.agui.model.protocol.RunAgentInput getInput() {
+    return input;
+  }
+
+  public void setInput(io.dscope.camel.agui.model.protocol.RunAgentInput value) {
+    input = value;
+  }
 }

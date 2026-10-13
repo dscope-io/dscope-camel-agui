@@ -22,6 +22,9 @@ import org.apache.camel.Processor;
 
 public class AgUiSseProcessor implements Processor {
 
+    private static final int DEFAULT_LIMIT = 200;
+    private static final int MAX_LIMIT = 500;
+
     private final AgUiSessionRegistry sessionRegistry;
 
     public AgUiSseProcessor(AgUiSessionRegistry sessionRegistry) {
@@ -39,10 +42,13 @@ public class AgUiSseProcessor implements Processor {
         }
 
         Long afterSequence = exchange.getIn().getHeader("afterSequence", Long.class);
+        if (afterSequence == null) {
+            afterSequence = exchange.getIn().getHeader("Last-Event-ID", Long.class);
+        }
         Integer limit = exchange.getIn().getHeader("limit", Integer.class);
 
         long from = afterSequence == null ? 0L : afterSequence;
-        int max = limit == null ? 200 : limit;
+        int max = limit == null ? DEFAULT_LIMIT : Math.max(1, Math.min(limit, MAX_LIMIT));
 
         List<AgUiSessionEventRecord> events = sessionRegistry.eventsSince(runId, from, max);
         StringBuilder body = new StringBuilder();
@@ -54,6 +60,9 @@ public class AgUiSseProcessor implements Processor {
 
         exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/event-stream");
         exchange.getMessage().setHeader("Cache-Control", "no-cache");
+        if (!events.isEmpty()) {
+            exchange.getMessage().setHeader("X-AGUI-Next-Sequence", events.get(events.size() - 1).sequence());
+        }
         exchange.getMessage().setBody(body.toString());
     }
 }

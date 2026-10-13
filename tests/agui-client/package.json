@@ -1,0 +1,7 @@
+{
+  "name": "camel-agui-interoperability-tests",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node interoperability.mjs" },
+  "dependencies": { "@ag-ui/client": "1.0.0", "@ag-ui/core": "1.0.0" }
+}

@@ -52,7 +52,7 @@ class PersistentAgUiPersistenceRedisJdbcTest {
         AgUiSession session = first.getOrCreate(runId, "session-1");
 
         session.emit(new AgUiRunStarted(runId, session.getSessionId()));
-        session.emit(new AgUiTextMessageContent(runId, session.getSessionId(), "hello-redis-jdbc"));
+        session.emit(new AgUiTextMessageContent(runId, session.getSessionId(), "message-1", "hello-redis-jdbc"));
         session.complete();
 
         FlowStateStore secondStore = newRedisJdbcStore(uri, randomPrefix(), jdbcUrl);

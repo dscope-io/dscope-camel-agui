@@ -33,36 +33,34 @@ Use Maven commands in this repo; use Gradle commands in downstream Gradle-based 
 For downstream projects using this component:
 
 - Group: `io.dscope.camel`
-- Artifact: `camel-ag-ui`
-- Version: use your released version (for example `1.3.0`)
+- Artifact: `camel-ag-ui-component`
+- Version: use your released version (for example `1.4.0`)
 
-Default Central release in this repository publishes the root POM artifact:
-
-- `io.dscope.camel:camel-ag-ui:1.3.0`
+Central release tooling selects the component and its parent POM. See [AG-UI 1.0 migration](agui-1.0-migration.md) for protocol configuration and dependency prerequisites.
 
 Maven:
 
 ```xml
 <dependency>
 	<groupId>io.dscope.camel</groupId>
-	<artifactId>camel-ag-ui</artifactId>
-	<version>1.3.0</version>
+	<artifactId>camel-ag-ui-component</artifactId>
+	<version>1.4.0</version>
 </dependency>
 ```
 
 Gradle (Groovy):
 
 ```groovy
-implementation 'io.dscope.camel:camel-ag-ui:1.3.0'
+implementation 'io.dscope.camel:camel-ag-ui-component:1.4.0'
 ```
 
 Gradle (Kotlin):
 
 ```kotlin
-implementation("io.dscope.camel:camel-ag-ui:1.3.0")
+implementation("io.dscope.camel:camel-ag-ui-component:1.4.0")
 ```
 
-If module publishing is enabled (`--include-modules`), module coordinates like `io.dscope.camel:camel-ag-ui-component:<version>` are available.
+The parent POM is `io.dscope.camel:camel-ag-ui:1.4.0`; applications depend on the component JAR.
 
 ## Module-by-Module
 
@@ -72,6 +70,8 @@ mvn -pl samples/ag-ui-yaml-service -am test
 ```
 
 ## Run Sample Runtime
+
+The sample binds to loopback by default. Set `-Dagui.access.token=<strong-random-token>` before exposing it outside the host; clients must send the matching `Authorization: Bearer` header.
 
 From repository root (recommended):
 

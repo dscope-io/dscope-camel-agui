@@ -48,7 +48,7 @@ class PersistentAgUiPersistenceRedisTest {
         AgUiSession session = first.getOrCreate(runId, "session-1");
 
         session.emit(new AgUiRunStarted(runId, session.getSessionId()));
-        session.emit(new AgUiTextMessageContent(runId, session.getSessionId(), "hello-redis"));
+        session.emit(new AgUiTextMessageContent(runId, session.getSessionId(), "message-1", "hello-redis"));
 
         List<AgUiSessionEventRecord> emitted = first.eventsSince(runId, 0L, 20);
         assertEquals(2, emitted.size());
@@ -96,13 +96,13 @@ class PersistentAgUiPersistenceRedisTest {
         PersistentAgUiSessionRegistry first = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
         AgUiSession original = first.getOrCreate(runId, "thread-1");
         original.emit(new AgUiRunStarted(runId, original.getSessionId()));
-        original.emit(new AgUiTextMessageContent(runId, original.getSessionId(), "before-restart"));
+        original.emit(new AgUiTextMessageContent(runId, original.getSessionId(), "message-1", "before-restart"));
         original.complete();
 
         PersistentAgUiSessionRegistry second = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
         AgUiSession rehydrated = second.getOrCreate(runId, "ignored-thread");
         assertEquals("thread-1", rehydrated.getSessionId());
-        rehydrated.emit(new AgUiTextMessageContent(runId, rehydrated.getSessionId(), "after-restart"));
+        rehydrated.emit(new AgUiTextMessageContent(runId, rehydrated.getSessionId(), "message-1", "after-restart"));
         rehydrated.complete();
 
         PersistentAgUiSessionRegistry third = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
@@ -126,7 +126,7 @@ class PersistentAgUiPersistenceRedisTest {
         PersistentAgUiSessionRegistry first = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);
         AgUiSession session = first.getOrCreate(runId, "thread-1");
         session.emit(new AgUiRunStarted(runId, session.getSessionId()));
-        session.emit(new AgUiTextMessageContent(runId, session.getSessionId(), "hello"));
+        session.emit(new AgUiTextMessageContent(runId, session.getSessionId(), "message-1", "hello"));
         session.complete();
 
         PersistentAgUiSessionRegistry second = new PersistentAgUiSessionRegistry(codec, store, aggressiveSnapshots);

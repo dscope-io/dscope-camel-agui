@@ -1,0 +1,7 @@
+AG-UI 1.0 JSON Schema
+Source: https://docs.ag-ui.com/spec/1.0/schema.json
+Retrieved: 2026-09-30
+SHA-256: 4b5c93226838a0e72d88e6c5df20633c686c49fcb75d9be2815c6cbf9e48e71a
+Upstream: https://github.com/ag-ui-protocol/ag-ui
+License: MIT (see schema-1.0-LICENSE.txt).
+The schema is bundled unchanged; validation never downloads it at runtime.

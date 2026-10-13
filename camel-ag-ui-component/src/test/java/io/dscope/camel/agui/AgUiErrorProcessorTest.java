@@ -35,6 +35,6 @@ class AgUiErrorProcessorTest {
 
         String body = exchange.getMessage().getBody(String.class);
         Assertions.assertTrue(body.contains("\"code\":-32601"));
-        Assertions.assertTrue(body.contains("missing"));
+        Assertions.assertTrue(body.contains("Method not found"));
     }
 }

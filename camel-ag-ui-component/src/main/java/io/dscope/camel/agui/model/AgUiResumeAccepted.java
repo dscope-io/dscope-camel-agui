@@ -14,9 +14,9 @@
 
 package io.dscope.camel.agui.model;
 
-public class AgUiResumeAccepted extends AgUiEvent {
+public class AgUiResumeAccepted extends AgUiCustom {
 
-    public AgUiResumeAccepted(String runId, String sessionId) {
-        super(AgUiEventTypes.RESUME_ACCEPTED, runId, sessionId);
-    }
+  public AgUiResumeAccepted(String runId, String sessionId) {
+    super(runId, sessionId, AgUiEventTypes.RESUME_ACCEPTED, java.util.Map.of());
+  }
 }

@@ -14,10 +14,9 @@
 
 package io.dscope.camel.agui.model;
 
-public class AgUiInterruptRequested extends AgUiEvent {
+public class AgUiInterruptRequested extends AgUiCustom {
 
-    public AgUiInterruptRequested(String runId, String sessionId, String reason) {
-        super(AgUiEventTypes.INTERRUPT_REQUESTED, runId, sessionId);
-        with("reason", reason);
-    }
+  public AgUiInterruptRequested(String runId, String sessionId, String reason) {
+    super(runId, sessionId, AgUiEventTypes.INTERRUPT_REQUESTED, java.util.Map.of("reason", reason));
+  }
 }

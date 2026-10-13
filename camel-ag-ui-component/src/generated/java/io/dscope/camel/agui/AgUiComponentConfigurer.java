@@ -27,6 +27,8 @@ public class AgUiComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "eventmiddleware":
+        case "eventMiddleware": target.setEventMiddleware(property(camelContext, java.util.List.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -40,6 +42,8 @@ public class AgUiComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "eventmiddleware":
+        case "eventMiddleware": return java.util.List.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -54,8 +58,19 @@ public class AgUiComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "eventmiddleware":
+        case "eventMiddleware": return target.getEventMiddleware();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "eventmiddleware":
+        case "eventMiddleware": return java.util.function.UnaryOperator.class;
         default: return null;
         }
     }

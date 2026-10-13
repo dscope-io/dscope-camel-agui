@@ -29,6 +29,7 @@ import io.dscope.camel.agui.bridge.NoopAgUiToolEventBridge;
 import io.dscope.camel.agui.config.AgUiProtocolMethods;
 import io.dscope.camel.agui.model.AgUiMethodCatalog;
 import io.dscope.camel.agui.processor.AgUiAgentEnvelopeProcessor;
+import io.dscope.camel.agui.processor.AgUiAccessProcessor;
 import io.dscope.camel.agui.processor.AgUiAgentRequestProcessor;
 import io.dscope.camel.agui.processor.AgUiDiagnosticsProcessor;
 import io.dscope.camel.agui.processor.AgUiErrorProcessor;
@@ -75,6 +76,7 @@ public class AgUiComponentApplicationSupport {
     public static final String BEAN_AGENT_ENVELOPE_PROCESSOR = "agUiAgentEnvelopeProcessor";
     public static final String BEAN_AGENT_REQUEST_PROCESSOR = "agUiAgentRequestProcessor";
     public static final String BEAN_AGENT_PRE_RUN_TEXT_PROCESSOR = "agUiAgentPreRunTextProcessor";
+    public static final String BEAN_ACCESS_PROCESSOR = "agUiAccessProcessor";
 
     @FunctionalInterface
     public interface BeanBinder {
@@ -139,6 +141,7 @@ public class AgUiComponentApplicationSupport {
         binder.bind(BEAN_TASK_EVENT_BRIDGE, taskEventBridge);
         binder.bind(BEAN_ENVELOPE_PROCESSOR, new AgUiJsonRpcEnvelopeProcessor());
         binder.bind(BEAN_AGENT_ENVELOPE_PROCESSOR, new AgUiAgentEnvelopeProcessor());
+        binder.bind(BEAN_ACCESS_PROCESSOR, new AgUiAccessProcessor());
         binder.bind(BEAN_ERROR_PROCESSOR, new AgUiErrorProcessor());
         binder.bind(BEAN_METHOD_DISPATCH_PROCESSOR, new AgUiMethodDispatchProcessor(methods));
         binder.bind(BEAN_AGENT_REQUEST_PROCESSOR, new AgUiAgentRequestProcessor());

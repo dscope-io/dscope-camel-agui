@@ -1,4 +1,5 @@
 agui:
+  host: 127.0.0.1
   health:
     port: 8080
   rpc:

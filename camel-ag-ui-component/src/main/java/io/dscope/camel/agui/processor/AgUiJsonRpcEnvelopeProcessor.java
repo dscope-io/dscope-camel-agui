@@ -33,6 +33,9 @@ public class AgUiJsonRpcEnvelopeProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         Map<String, Object> envelope = readEnvelope(exchange.getIn());
         exchange.setProperty(AgUiExchangeProperties.RAW_PAYLOAD, envelope);
+        Object id = envelope.get("id");
+        exchange.setProperty(AgUiExchangeProperties.ENVELOPE_TYPE, id == null ? "notification" : "request");
+        exchange.setProperty(AgUiExchangeProperties.REQUEST_ID, id);
 
         String jsonRpc = asString(envelope.get("jsonrpc"));
         if (!AgUiProtocolDefaults.JSONRPC_VERSION.equals(jsonRpc)) {
@@ -47,9 +50,6 @@ public class AgUiJsonRpcEnvelopeProcessor implements Processor {
             throw new AgUiMethodNotFoundException("Method not found: " + method);
         }
 
-        Object id = envelope.get("id");
-        exchange.setProperty(AgUiExchangeProperties.ENVELOPE_TYPE, id == null ? "notification" : "request");
-        exchange.setProperty(AgUiExchangeProperties.REQUEST_ID, id);
         exchange.setProperty(AgUiExchangeProperties.METHOD, method);
 
         Object params = envelope.get("params");

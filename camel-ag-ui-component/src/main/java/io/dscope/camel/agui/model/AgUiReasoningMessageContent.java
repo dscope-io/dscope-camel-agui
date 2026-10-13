@@ -1,0 +1,47 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.dscope.camel.agui.model;
+
+import io.dscope.camel.agui.model.protocol.*;
+
+public class AgUiReasoningMessageContent extends AgUiEvent {
+  public AgUiReasoningMessageContent() {
+    super("REASONING_MESSAGE_CONTENT", null, null);
+  }
+
+  public AgUiReasoningMessageContent(String runId, String sessionId) {
+    super("REASONING_MESSAGE_CONTENT", runId, sessionId);
+  }
+
+  private String messageId;
+
+  public String getMessageId() {
+    return messageId;
+  }
+
+  public void setMessageId(String value) {
+    this.messageId = value;
+  }
+
+  private String delta;
+
+  public String getDelta() {
+    return delta;
+  }
+
+  public void setDelta(String value) {
+    this.delta = value;
+  }
+}

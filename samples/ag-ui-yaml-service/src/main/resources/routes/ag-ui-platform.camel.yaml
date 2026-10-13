@@ -4,7 +4,7 @@
       id: from4264
       uri: undertow
       parameters:
-        httpURI: http://0.0.0.0:{{agui.health.port:8080}}/health
+        httpURI: http://{{agui.host:127.0.0.1}}:{{agui.health.port:8080}}/health
       steps:
         - process:
             id: process06a2
@@ -15,7 +15,7 @@
       id: froma629
       uri: undertow
       parameters:
-        httpURI: http://0.0.0.0:{{agui.health.port:8080}}/diagnostics
+        httpURI: http://{{agui.host:127.0.0.1}}:{{agui.health.port:8080}}/diagnostics
       steps:
         - process:
             id: process043e
@@ -26,7 +26,7 @@
       id: from3f50
       uri: undertow
       parameters:
-        httpURI: http://0.0.0.0:{{agui.rpc.port:8080}}/agui/rpc?httpMethodRestrict=POST
+        httpURI: http://{{agui.host:127.0.0.1}}:{{agui.rpc.port:8080}}/agui/rpc?httpMethodRestrict=POST
       steps:
         - doTry:
             id: doTryb233
@@ -40,6 +40,8 @@
                       ref: agUiErrorProcessor
             steps:
               - process:
+                  ref: agUiAccessProcessor
+              - process:
                   id: processcbc5
                   ref: agUiJsonRpcEnvelopeProcessor
               - process:
@@ -51,7 +53,7 @@
       id: from646e
       uri: undertow
       parameters:
-        httpURI: http://0.0.0.0:{{agui.rpc.port:8080}}/agui/agent?httpMethodRestrict=POST
+        httpURI: http://{{agui.host:127.0.0.1}}:{{agui.rpc.port:8080}}/agui/legacy/agent?httpMethodRestrict=POST
       steps:
         - doTry:
             id: doTryc5e2
@@ -64,6 +66,8 @@
                       id: process0928
                       ref: agUiErrorProcessor
             steps:
+              - process:
+                  ref: agUiAccessProcessor
               - process:
                   id: processcc0b
                   ref: agUiAgentEnvelopeProcessor
@@ -82,7 +86,7 @@
       id: frombtr01
       uri: undertow
       parameters:
-        httpURI: http://0.0.0.0:{{agui.rpc.port:8080}}/agui/backend_tool_rendering?httpMethodRestrict=POST
+        httpURI: http://{{agui.host:127.0.0.1}}:{{agui.rpc.port:8080}}/agui/backend_tool_rendering?httpMethodRestrict=POST
       steps:
         - doTry:
             id: doTrybtr01
@@ -95,6 +99,8 @@
                       id: processbtr01
                       ref: agUiErrorProcessor
             steps:
+              - process:
+                  ref: agUiAccessProcessor
               - process:
                   id: processbtr02
                   ref: agUiAgentEnvelopeProcessor
@@ -113,8 +119,10 @@
       id: from2af2
       uri: undertow
       parameters:
-        httpURI: http://0.0.0.0:{{agui.rpc.port:8080}}/agui/stream/{runId}?httpMethodRestrict=GET
+        httpURI: http://{{agui.host:127.0.0.1}}:{{agui.rpc.port:8080}}/agui/stream/{runId}?httpMethodRestrict=GET
       steps:
+        - process:
+            ref: agUiAccessProcessor
         - process:
             id: process0370
             ref: agUiSseProcessor
@@ -124,8 +132,28 @@
       id: frome36b
       uri: undertow
       parameters:
-        httpURI: http://0.0.0.0:{{agui.rpc.port:8080}}/agui/ui?httpMethodRestrict=GET
+        httpURI: http://{{agui.host:127.0.0.1}}:{{agui.rpc.port:8080}}/agui/ui?httpMethodRestrict=GET
       steps:
+        - process:
+            ref: agUiAccessProcessor
         - process:
             id: process5808
             ref: agUiUiPageProcessor
+
+- route:
+    id: agui-standard-agent
+    from:
+      uri: "agui:sample?transportMode=httpSse&serverUrl=undertow:http://{{agui.host:127.0.0.1}}:{{agui.rpc.port:8080}}&agentPath=/agui/agent"
+      steps:
+        - process:
+            ref: agUiStandardSampleProcessor
+
+- route:
+    id: agui-capabilities
+    from:
+      uri: "undertow:http://{{agui.host:127.0.0.1}}:{{agui.rpc.port:8080}}/agui/capabilities?httpMethodRestrict=GET"
+      steps:
+        - process:
+            ref: agUiAccessProcessor
+        - process:
+            ref: agUiCapabilitiesProcessor

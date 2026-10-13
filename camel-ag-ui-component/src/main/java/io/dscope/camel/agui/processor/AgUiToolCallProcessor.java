@@ -71,8 +71,8 @@ public class AgUiToolCallProcessor implements Processor {
         } catch (Exception e) {
             resultContent = "{}";
         }
-        session.emit(new AgUiToolCallResult(runId, sessionId, messageId, toolCallId, resultContent, "tool"));
         session.emit(new AgUiToolCallEnd(runId, sessionId, toolCallId, toolName));
+        session.emit(new AgUiToolCallResult(runId, sessionId, messageId, toolCallId, resultContent, "tool"));
         toolEventBridge.onToolCallResult(runId, sessionId, toolName, result);
 
         exchange.setProperty(AgUiExchangeProperties.METHOD_RESULT,

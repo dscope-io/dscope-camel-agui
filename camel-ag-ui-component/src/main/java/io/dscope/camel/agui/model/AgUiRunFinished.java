@@ -14,9 +14,56 @@
 
 package io.dscope.camel.agui.model;
 
-public class AgUiRunFinished extends AgUiEvent {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    public AgUiRunFinished(String runId, String sessionId) {
-        super(AgUiEventTypes.RUN_FINISHED, runId, sessionId);
-    }
+public class AgUiRunFinished extends AgUiEvent {
+  public AgUiRunFinished() {
+    super("RUN_FINISHED", null, null);
+  }
+
+  public AgUiRunFinished(String runId, String sessionId) {
+    super(AgUiEventTypes.RUN_FINISHED, runId, sessionId);
+  }
+
+  @Override
+  @JsonIgnore(false)
+  public String getRunId() {
+    return super.getRunId();
+  }
+
+  @Override
+  @JsonIgnore(false)
+  public String getThreadId() {
+    return super.getThreadId();
+  }
+
+  private io.dscope.camel.agui.model.protocol.RunFinishedOutcome outcome;
+
+  public io.dscope.camel.agui.model.protocol.RunFinishedOutcome getOutcome() {
+    return outcome;
+  }
+
+  public void setOutcome(io.dscope.camel.agui.model.protocol.RunFinishedOutcome value) {
+    outcome = value;
+  }
+
+  private Object result;
+
+  public Object getResult() {
+    return result;
+  }
+
+  public void setResult(Object value) {
+    result = value;
+  }
+
+  private java.util.List<io.dscope.camel.agui.model.protocol.TokenUsage> usage;
+
+  public java.util.List<io.dscope.camel.agui.model.protocol.TokenUsage> getUsage() {
+    return usage;
+  }
+
+  public void setUsage(java.util.List<io.dscope.camel.agui.model.protocol.TokenUsage> value) {
+    usage = value;
+  }
 }

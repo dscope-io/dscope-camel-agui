@@ -33,5 +33,6 @@ class AgUiStateDeltaCalculatorTest {
 
         Assertions.assertEquals(1, patch.size());
         Assertions.assertEquals("replace", patch.getFirst().get("op"));
+        Assertions.assertEquals("", patch.getFirst().get("path"));
     }
 }

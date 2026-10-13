@@ -48,7 +48,7 @@ class PersistentAgUiSessionRegistryTest {
         );
 
         AgUiSession session = registry.getOrCreate(runId, "ignored-thread");
-        session.emit(new AgUiTextMessageContent(runId, session.getSessionId(), "after-conflict"));
+        session.emit(new AgUiTextMessageContent(runId, session.getSessionId(), "message-1", "after-conflict"));
 
         assertEquals(List.of(4L, 4L), store.expectedVersions);
     }

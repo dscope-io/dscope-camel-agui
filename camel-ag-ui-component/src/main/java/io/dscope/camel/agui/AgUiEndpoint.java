@@ -36,6 +36,7 @@ public class AgUiEndpoint extends DefaultEndpoint {
     @UriPath(description = "Target AG-UI agent identifier")
     private String agentId;
 
+    @org.apache.camel.spi.UriParam
     private final AgUiConfiguration configuration;
 
     @SuppressWarnings("unused")

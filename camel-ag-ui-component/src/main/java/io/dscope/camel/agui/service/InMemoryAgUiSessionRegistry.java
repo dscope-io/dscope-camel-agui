@@ -17,6 +17,8 @@ package io.dscope.camel.agui.service;
 import io.dscope.camel.agui.model.AgUiEvent;
 import io.dscope.camel.agui.model.AgUiRunError;
 import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -24,16 +26,34 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryAgUiSessionRegistry implements AgUiSessionRegistry {
 
+    private static final int DEFAULT_MAX_EVENTS_PER_SESSION = 1_000;
+    private static final int DEFAULT_MAX_SESSIONS = 10_000;
+
     private final ConcurrentMap<String, SessionState> sessions = new ConcurrentHashMap<>();
     private final AgUiEventCodec codec;
+    private final int maxEventsPerSession;
+    private final int maxSessions;
 
     public InMemoryAgUiSessionRegistry(AgUiEventCodec codec) {
+        this(codec, DEFAULT_MAX_EVENTS_PER_SESSION, DEFAULT_MAX_SESSIONS);
+    }
+
+    public InMemoryAgUiSessionRegistry(AgUiEventCodec codec, int maxEventsPerSession) {
+        this(codec, maxEventsPerSession, DEFAULT_MAX_SESSIONS);
+    }
+
+    public InMemoryAgUiSessionRegistry(AgUiEventCodec codec, int maxEventsPerSession, int maxSessions) {
         this.codec = codec;
+        this.maxEventsPerSession = Math.max(1, maxEventsPerSession);
+        this.maxSessions = Math.max(1, maxSessions);
     }
 
     @Override
     public AgUiSession getOrCreate(String runId, String sessionId) {
-        return sessions.computeIfAbsent(runId, ignored -> new SessionState(runId, sessionId, codec));
+        if (!sessions.containsKey(runId) && sessions.size() >= maxSessions) {
+            throw new IllegalStateException("AG-UI session capacity has been reached");
+        }
+        return sessions.computeIfAbsent(runId, ignored -> new SessionState(runId, sessionId, codec, maxEventsPerSession));
     }
 
     @Override
@@ -59,14 +79,16 @@ public class InMemoryAgUiSessionRegistry implements AgUiSessionRegistry {
 
         private final String runId;
         private final String sessionId;
-        private final List<AgUiSessionEventRecord> events = new ArrayList<>();
+        private final Deque<AgUiSessionEventRecord> events = new ArrayDeque<>();
         private final AtomicLong sequence = new AtomicLong();
         private final AgUiEventCodec codec;
+        private final int maxEvents;
 
-        private SessionState(String runId, String sessionId, AgUiEventCodec codec) {
+        private SessionState(String runId, String sessionId, AgUiEventCodec codec, int maxEvents) {
             this.runId = runId;
             this.sessionId = sessionId;
             this.codec = codec;
+            this.maxEvents = maxEvents;
         }
 
         @Override
@@ -84,8 +106,9 @@ public class InMemoryAgUiSessionRegistry implements AgUiSessionRegistry {
             if (event.getThreadId() == null || event.getThreadId().isBlank()) {
                 event.setThreadId(sessionId);
             }
+            String json = codec.toJson(event);
             long next = sequence.incrementAndGet();
-            events.add(new AgUiSessionEventRecord(next, event.getType(), codec.toJson(event)));
+            addEvent(new AgUiSessionEventRecord(next, event.getType(), json));
             return next;
         }
 
@@ -98,7 +121,7 @@ public class InMemoryAgUiSessionRegistry implements AgUiSessionRegistry {
         public synchronized void fail(Throwable error) {
             AgUiRunError runError = new AgUiRunError(runId, sessionId, error.getMessage());
             long next = sequence.incrementAndGet();
-            events.add(new AgUiSessionEventRecord(next, runError.getType(), codec.toJson(runError)));
+            addEvent(new AgUiSessionEventRecord(next, runError.getType(), codec.toJson(runError)));
         }
 
         private synchronized List<AgUiSessionEventRecord> eventsSince(long afterSequence, int limit) {
@@ -112,6 +135,13 @@ public class InMemoryAgUiSessionRegistry implements AgUiSessionRegistry {
                 }
             }
             return selected;
+        }
+
+        private void addEvent(AgUiSessionEventRecord event) {
+            events.addLast(event);
+            while (events.size() > maxEvents) {
+                events.removeFirst();
+            }
         }
     }
 }
